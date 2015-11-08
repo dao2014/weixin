@@ -165,7 +165,7 @@ public class WeixinMsgController extends MsgController {
 		OutNewsMsg outMsg = new OutNewsMsg(inLinkMsg);
 		outMsg.addNews("链接消息已成功接收", "链接使用图文消息的方式发回给你，还可以使用文本方式发回。点击图文消息可跳转到链接地址页面，是不是很好玩 :)" , "http://mmbiz.qpic.cn/mmbiz/zz3Q6WSrzq1ibBkhSA1BibMuMxLuHIvUfiaGsK7CC4kIzeh178IYSHbYQ5eg9tVxgEcbegAu22Qhwgl5IhZFWWXUw/0", inLinkMsg.getUrl());
 		render(outMsg);
-	}
+	} 
 	
 	/**
 	 * 实现父类抽方法，处理关注/取消关注消息
