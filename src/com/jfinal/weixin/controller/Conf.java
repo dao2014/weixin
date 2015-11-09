@@ -3,6 +3,7 @@ package com.jfinal.weixin.controller;
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
+import com.jfinal.config.JFinalConfig;
 import com.jfinal.config.Plugins;
 import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
@@ -11,7 +12,7 @@ import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
-public class Conf {
+public class Conf extends JFinalConfig{
 	/**
 	 * 如果生产环境配置文件存在，则优先加载该配置，否则加载开发环境配置文件
 	 * @param pro 生产环境配置文件
@@ -56,6 +57,6 @@ public class Conf {
 	}
 	
 	public static void main(String[] args) {
-		JFinal.start("webapp", 80, "/", 5);
+		JFinal.start("webapp", 8080, "/", 5);
 	}
 }

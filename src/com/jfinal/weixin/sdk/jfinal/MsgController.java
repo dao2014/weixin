@@ -50,8 +50,8 @@ public abstract class MsgController extends Controller {
 	public void index() {
 		// 开发模式输出微信服务发送过来的  xml 消息
 		if (ApiConfigKit.isDevMode()) {
-			System.out.println("接收消息:");
-			System.out.println(getInMsgXml());
+			log.info("接收消息:");
+			log.info(getInMsgXml());
 		}
 		
 		// 解析消息并根据消息类型分发到相应的处理方法
