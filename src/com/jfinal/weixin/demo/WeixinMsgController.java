@@ -174,7 +174,7 @@ public class WeixinMsgController extends MsgController {
 		OutTextMsg outMsg = new OutTextMsg(inFollowEvent);
 		outMsg.setContent("感谢关注 JFinal Weixin 极速开发服务号，为您节约更多时间，去陪恋人、家人和朋友 :) \n\n\n " + helpStr);
 		// 如果为取消关注事件，将无法接收到传回的信息
-		render(outMsg);
+		render(outMsg); 
 	}
 	
 	/**

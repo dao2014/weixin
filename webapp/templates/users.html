@@ -1,0 +1,49 @@
+<div class="row">
+	<div class="col-md-6">
+	  <form name="dataSearch" class="form-inline">	
+	      <label for="name">Traži: </label>
+	      <div class="form-group">
+	          <label for="name" class="sr-only">Ime</label>
+	          <input ng-model="searchName" class="form-control" data-ng-change="loadUserData()" placeholder="Ime" />
+	      </div>
+	  </form>
+	</div>
+</div>	
+
+<div class="row mainGrid" >
+	<div class="col-lg-6">
+		<div data-ng-init="loadUserData()" >
+			<table class="table table-hover table-bordered table-striped table-condensed">
+				<thead class="table-head">
+					<tr>
+						<th class="ime">Ime</th>
+						<th>Prezime</th>
+						<th>Grad</th>
+						<th>Opis</th>
+						<th>#</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="user in users">
+					   <td>{{user.firstName}}</td>
+					   <td>{{user.lastName}}</td>
+					   <td>{{user.city}}</td>
+					   <td>{{user.description}}</td>
+					   <td><a href="#userDetails/{{user.id}}">Detalji</a></td>
+					</tr>
+				</tbody>
+			</table>               
+		  <div class="table-footer">
+			  <pagination
+				total-items="pagingOptions.totalItems"
+				ng-model="pagingOptions.currentPage"
+				items-per-page="pagingOptions.pageSize"
+				max-size="3"
+				previous-text="&lsaquo;"
+				next-text="&rsaquo;"
+				class="pull-right pagination-sm" ng-click="loadUserData()">
+		  </div>			
+		</div>
+		<a href="#/newUser" class="btn btn-primary">Novi član</a>
+	</div>		
+</div>

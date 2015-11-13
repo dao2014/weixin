@@ -1,0 +1,43 @@
+<div class="alert alert-success fadein fadeout" role="alert" ng-show="poruka" 
+	 xmlns="http://www.w3.org/1999/html">
+	Promjene uspjesno izvrsene!
+</div>
+<div class="row">
+	<div class="col-lg-7">
+			<form class="form-horizontal" name="SubmitKontakt" >
+				<fieldset style="margin-bottom:50px;">
+					<legend>Detalji osobe</legend>
+					<div class="form-group">
+						<label for="inputIme" class="col-lg-2 control-label">Ime</label>
+						<div class="col-lg-6">
+							<input type="text" ng-model="userDetails.firstName" class="form-control" id="inputFirstName" placeholder="Ime" required="required"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputPrezime" class="col-lg-2 control-label">Prezime</label>
+						<div class="col-lg-6">
+							<input type="text" ng-model="userDetails.lastName" class="form-control" id="inputLastName" placeholder="Prezime" required="required"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputGrad" class="col-lg-2 control-label">Grad</label>
+						<div class="col-lg-6">
+							<input type="text" ng-model="userDetails.city" class="form-control" id="inputCity" placeholder="Grad" required="required"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputOpis" class="col-lg-2 control-label">Opis</label>
+						<div class="col-lg-8">
+							<textarea ng-model="userDetails.description" class="form-control" rows="3" id="inputDescription"></textarea>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+	  </div>
+ </div>
+		 
+<div class="row" style="text-align:left; margin-left:25px; margin-bottom: 40px;">
+	<button type="button"  ng-click="updateChanges()" class="btn btn-primary">Spremi</button>
+	<button type="button"  ng-click="deleteUser()" class="btn btn-danger">Izbriši</button>
+	<button type="button"  ng-click="cancelEdit()" class="btn btn-primary">Odustani</button>	
+</div>		 

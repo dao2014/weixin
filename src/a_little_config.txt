@@ -1,6 +1,6 @@
-jdbcUrl = jdbc:mysql://127.0.0.1/jfinal_weixin?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+jdbcUrl = jdbc:mysql://127.0.0.1/direct_seeding?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
 user = root
-password =
+password =123456
 devMode = true
 
 # 微信服务器回调所用的 token
