@@ -37,7 +37,7 @@ import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
  */
 public abstract class MsgController extends Controller {
 	
-	private static final Logger log =  Logger.getLogger(MsgController.class);
+	public static final Logger log =  Logger.getLogger(MsgController.class);
 	private String inMsgXml = null;		// 本次请求 xml数据
 	private InMsg inMsg = null;			// 本次请求 xml 解析后的 InMsg 对象
 	

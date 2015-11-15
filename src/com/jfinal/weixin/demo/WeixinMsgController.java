@@ -7,6 +7,8 @@
 package com.jfinal.weixin.demo;
 
 import com.jfinal.kit.PropKit;
+import com.jfinal.log.Logger;
+import com.jfinal.weixin.common.Controller;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.jfinal.MsgController;
 import com.jfinal.weixin.sdk.msg.in.InImageMsg;
@@ -26,6 +28,8 @@ import com.jfinal.weixin.sdk.msg.out.OutMusicMsg;
 import com.jfinal.weixin.sdk.msg.out.OutNewsMsg;
 import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
 import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
+import com.jfinal.weixin.server.UserServer;
+import com.jfinal.weixin.server.impl.UserServerImpl;
 
 /**
  * 将此 DemoController 在YourJFinalConfig 中注册路由，
@@ -34,7 +38,8 @@ import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
  * 方法即可直接运行看效果，在此基础之上修改相关的方法即可进行实际项目开发
  */
 public class WeixinMsgController extends MsgController {
-	
+	private UserServer userServer = new UserServerImpl();
+	public static final Logger log =  Logger.getLogger(WeixinMsgController.class);
 	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"美女\" 可看美女，发送 news 可看新闻，发送 music 可听音乐，你还可以试试发送图片、语音、位置、收藏等信息，看会有什么 。公众号持续更新中，想要更多惊喜欢迎每天关注 ^_^";
 	
 	/**
@@ -171,10 +176,20 @@ public class WeixinMsgController extends MsgController {
 	 * 实现父类抽方法，处理关注/取消关注消息
 	 */
 	protected void processInFollowEvent(InFollowEvent inFollowEvent) {
-		OutTextMsg outMsg = new OutTextMsg(inFollowEvent);
-		outMsg.setContent("感谢关注 JFinal Weixin 极速开发服务号，为您节约更多时间，去陪恋人、家人和朋友 :) \n\n\n " + helpStr);
-		// 如果为取消关注事件，将无法接收到传回的信息
-		render(outMsg); 
+		
+		try {
+			userServer.saveOrUpdateUser(inFollowEvent);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			
+			log.error(e.fillInStackTrace()+"");
+		}finally{
+			OutTextMsg outMsg = new OutTextMsg(inFollowEvent);
+			outMsg.setContent(Controller.ATTENTION);
+			// 如果为取消关注事件，将无法接收到传回的信息
+			render(outMsg); 
+		}
+		
 	}
 	
 	/**
