@@ -9,6 +9,7 @@ import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.weixin.controller.DirectControlle;
 import com.jfinal.weixin.controller.IndexController;
 import com.jfinal.weixin.controller.UserController;
 import com.jfinal.weixin.demo.WeixinApiController;
@@ -48,6 +49,7 @@ public class Conf extends JFinalConfig{
 	public void configRoute(Routes me) {
 		me.add("/", IndexController.class);
 		me.add("/user", UserController.class);
+		me.add("/direct", DirectControlle.class);
 		me.add("/msg", WeixinMsgController.class);
 		me.add("/api", WeixinApiController.class, "/api");
 	}

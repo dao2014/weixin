@@ -1,4 +1,4 @@
-package com.jfinal.weixin.common.bean;
+package com.jfinal.weixin.common.response;
 
 import java.util.List;
 
@@ -20,6 +20,10 @@ public class DataResponse extends BaseResponse {
 
     public DataResponse (List<?> data) {
         this.data = data;
+    }
+    public DataResponse (List<?> data,String msg) {
+    	super(msg);
+    	this.data = data;
     }
 
     public DataResponse(Integer code) {

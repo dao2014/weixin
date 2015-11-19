@@ -4,13 +4,16 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import com.jfinal.core.Controller;
-import com.jfinal.weixin.common.bean.BaseResponse;
-import com.jfinal.weixin.common.bean.Code;
-import com.jfinal.weixin.common.bean.DataResponse;
+import com.jfinal.weixin.common.response.BaseResponse;
+import com.jfinal.weixin.common.response.Code;
+import com.jfinal.weixin.common.response.DataResponse;
 import com.jfinal.weixin.tools.Require;
 import com.jfinal.weixin.tools.util.StringUtils;
 
-public class BaseControlle extends Controller{
+public class BaseControlle extends Controller {
+	
+	
+	
 	/**
      * 响应接口不存在*
      */
@@ -110,4 +113,5 @@ public class BaseControlle extends Controller{
 
         return true;
     }
+    
 }

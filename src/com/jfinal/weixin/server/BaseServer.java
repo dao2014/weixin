@@ -2,10 +2,10 @@ package com.jfinal.weixin.server;
 
 import java.util.Map;
 
+import com.jfinal.log.ILoggerFactory;
 import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 
-public abstract class BaseServer<M> {
+public  interface  BaseServer<M> extends ILoggerFactory{
 	
 	/**
 	 * 根据ID 删除

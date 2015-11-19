@@ -1,4 +1,4 @@
-package com.jfinal.weixin.common.bean;
+package com.jfinal.weixin.common.response;
 
 /**
  * @author malongbo

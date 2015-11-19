@@ -5,7 +5,7 @@ import java.util.Map;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.weixin.model.UserDirect;
 
-public interface DirectServer extends BaseServer{
+public interface DirectServer<M> extends BaseServer<M>{
 
 	
 	

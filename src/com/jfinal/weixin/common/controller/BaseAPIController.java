@@ -3,11 +3,16 @@ package com.jfinal.weixin.common.controller;
 import java.util.List;
 
 import com.jfinal.core.Controller;
-import com.jfinal.weixin.common.bean.BaseResponse;
-import com.jfinal.weixin.common.bean.Code;
-import com.jfinal.weixin.common.bean.DataResponse;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.weixin.common.ControllerMessage;
+import com.jfinal.weixin.common.response.BaseResponse;
+import com.jfinal.weixin.common.response.Code;
+import com.jfinal.weixin.common.response.DataResponse;
+import com.jfinal.weixin.common.response.DatumResponse;
+import com.jfinal.weixin.tools.util.StringUtils;
 
 public class BaseAPIController extends Controller{
+	
 	
 	
 	
@@ -29,6 +34,32 @@ public class BaseAPIController extends Controller{
         renderJson(new BaseResponse(Code.ARGUMENT_ERROR, message));
 
     }
+    
+    /**
+     * 返回界面查询
+     * @param page
+     */
+    public <T> void renderPage(Page<T> page){
+    	if(StringUtils.isNull(page)){
+    		renderError(ControllerMessage.RESPONG_MASG_ERROR);
+    	}else{
+    		renderJson(new DatumResponse(page,ControllerMessage.RESPONG_MASG_SUCCESS));
+    	}
+    }
+    
+    
+    /**
+     * 返回一个对象
+     * @param date
+     */
+    public void renderDatumResponse(Object date){
+    	
+    	if(StringUtils.isNull(date)){
+    		renderError(ControllerMessage.RESPONG_MASG_ERROR);
+    	}else{
+    		renderJson(new DatumResponse(date,ControllerMessage.RESPONG_MASG_SUCCESS));
+    	}
+    }
 
     /**
      * 响应数组类型*
@@ -36,13 +67,20 @@ public class BaseAPIController extends Controller{
      */
     public void renderDataResponse(List<?> list) {
         DataResponse resp = new DataResponse();
-        resp.setData(list);
         if (list == null || list.size() == 0) {
-            resp.setMessage("未查询到数据");
+        	renderError(ControllerMessage.RESPONG_MASG_ERROR);
         } else {
-            resp.setMessage("success");
+            renderJson(new DataResponse(list,ControllerMessage.RESPONG_MASG_SUCCESS));
         }
-        renderJson(resp);
+        
+    }
+    
+    /**
+     * 响应操作失败
+     * @param message 响应信息
+     */
+    public void renderError(String message) {
+        renderJson(new BaseResponse().setMessage(message));
         
     }
 
