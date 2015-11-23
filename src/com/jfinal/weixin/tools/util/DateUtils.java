@@ -1,93 +1,130 @@
 package com.jfinal.weixin.tools.util;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
 
 /**
  *  时间工具
  * @author malongbo
  */
-public final class DateUtils {
-    /**
-     *  获得当前时间
-     *  格式为：yyyy-MM-dd HH:mm:ss
-    */
-    public static String getNowTime() {
-        Date nowday = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 精确到秒
-        String time = sdf.format(nowday);
-        return time;
-    }
+public final class DateUtils { 
+	/**
+	 * 时间格式 
+	 */
+	public final static String TIME_FORMAT = "HH:mm:ss:SS";
 
-    /**
-     * 获取当前系统时间戳
+	/**
+	 * 缺省短日期格式
+	 */
+	public final static String DEFAULT_SHORT_DATE_FORMAT = "yyyy-MM-dd";
+
+	/**
+	 * yyyy-MM-dd HH:mm:ss格式数据。
+	 */
+	public final static String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	
+	private static DateFormat ddMMyyyySS = new SimpleDateFormat(
+			"yyyyMMddHHmmss");
+	private static DateFormat  zstr = new SimpleDateFormat(
+			DEFAULT_DATE_TIME_FORMAT);
+
+	/**
+	 * yyyy-MM-dd格式数据。
+	 */
+	public final static String DATE_ONLY_FORMAT = "yyyy-MM-dd";
+	/**
+	 * 缺省短日期格式
+	 */
+	public final static String DEFAULT_SHORT_DATE_FORMAT_ZH = "yyyy年M月d日";
+
+	/**
+	 * 日期字符串（yyyyMMdd HHmmss）
+	 */
+	public static final String YEAR_TO_SEC_UN_LINE = "yyyyMMdd HHmmss";
+	
+	/**
+	 * 缺省长日期格式
+	 */
+	public final static String DEFAULT_LONG_DATE_FORMAT = DEFAULT_SHORT_DATE_FORMAT
+			+ " " + TIME_FORMAT;
+
+	/**
+	 * Java能支持的最小日期字符串（yyyy-MM-dd）。
+	 */
+	public final static String JAVA_MIN_SHORT_DATE_STR = "1970-01-01";
+
+	/**
+	 * Java能支持的最小日期字符串（yyyy-MM-dd HH:mm:ss:SS）。
+	 */
+	public final static String JAVA_MIN_LONG_DATE_STR = "1970-01-01 00:00:00:00";
+
+	
+	
+	public static Date formateStr(String dateStr){
+		Date date=null;
+		try {
+			date = ddMMyyyySS.parse(dateStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return date;
+	}
+	
+	/**
+	 * 
+	 * @param date  2013-11-07 14:14:14
+	 * @return 20131107141414
+	 */
+	public static String formateDate( Date date ) {
+		String str1= "";
+		try {
+			str1 = ddMMyyyySS.format(date);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}  
+		  return str1;
+	}
+	
+	/**
+     * 返回分钟时间计算    结束时间  - 开始时间 
+     * @param beginT   开始时间
+     * @param endT     结束时间
      * @return
      */
-    public static Long getNowTimeStamp() {
-        return System.currentTimeMillis();
+    public static int dateminuteDiff(Date beginT,Date endT){
+    	Long diffbttow = (endT.getTime()-beginT.getTime())/1000/60;
+    	return diffbttow.intValue();
     }
-
-    public static Long getNowDateTime() {
-        return new Date().getTime()/1000;
-//        return new Date().getTime()/1000;
-    }
-
-    /**
-     * 自定义日期格式
-     * @param format
+	
+	/**
+     * 返回秒 时间计算               结束时间-开始时间
+     * @param begin   开始时间
+     * @param end     结束时间
      * @return
      */
-    public static String getNowTime(String format) {
-        Date nowday = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat(format);// 精确到秒
-        String time = sdf.format(nowday);
-        return time;
+    public static int dateSecondDiff(Date beginT,Date endT){
+    	Long diffbttow = (endT.getTime()-beginT.getTime())/1000;
+//    	int difference=end.get(Calendar.SECOND)-begin.get(Calendar.SECOND);
+    	return diffbttow.intValue();
     }
-
-    /**
-     * 将时间字符转成Unix时间戳
-     * @param timeStr
-     * @return
-     * @throws java.text.ParseException
-     */
-    public static Long getTime(String timeStr) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 精确到秒
-        Date date = sdf.parse(timeStr);
-        return date.getTime()/1000;
+    
+    public void ss(){
     }
+	/**
+	 * 测试
+	 * 
+	 * @param args
+	 */
+	public static void main(String args[]) {
+		int se = dateminuteDiff(formateStr("20151122220100"),formateStr("20151122220000"));
+		System.out.println(se);
+	}
 
-    /**
-     * 将Unix时间戳转成时间字符
-     * @param timestamp
-     * @return
-     */
-    public static String getTime(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 精确到秒
-        Date date = new Date(timestamp*1000);
-        return sdf.format(date);
-    }
-
-    /**
-     * 获取半年后的时间
-     * 时间字符格式为：yyyy-MM-dd HH:mm:ss
-     * @return 时间字符串
-     */
-    public static String getHalfYearLaterTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 精确到秒
-
-        Calendar calendar = Calendar.getInstance();
-        int currMonth = calendar.get(Calendar.MONTH) + 1;
-
-        if (currMonth >= 1 && currMonth <= 6) {
-            calendar.add(Calendar.MONTH, 6);
-        } else {
-            calendar.add(Calendar.YEAR, 1);
-            calendar.set(Calendar.MONTH, currMonth - 6 - 1);
-        }
-
-
-        return sdf.format(calendar.getTime());
-    }
+    
 }

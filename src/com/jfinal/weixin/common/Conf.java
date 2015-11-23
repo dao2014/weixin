@@ -9,6 +9,8 @@ import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.redis.RedisPlugin;
+import com.jfinal.weixin.controller.DirectAnswerControlle;
 import com.jfinal.weixin.controller.DirectControlle;
 import com.jfinal.weixin.controller.IndexController;
 import com.jfinal.weixin.controller.UserController;
@@ -17,6 +19,7 @@ import com.jfinal.weixin.demo.WeixinMsgController;
 import com.jfinal.weixin.model.DirectAnswer;
 import com.jfinal.weixin.model.DirectContent;
 import com.jfinal.weixin.model.DirectEvaluate;
+import com.jfinal.weixin.model.DirectSeeding;
 import com.jfinal.weixin.model.DirectType;
 import com.jfinal.weixin.model.User;
 import com.jfinal.weixin.model.UserDirect;
@@ -40,15 +43,16 @@ public class Conf extends JFinalConfig{
 	
 	public void configConstant(Constants me) {
 		loadProp( "a_little_config.txt","a_little_config_pro.txt");
-		me.setDevMode(PropKit.getBoolean("devMode", false));
+		me.setDevMode(PropKit.getBoolean("devMode", true));
 		// ApiConfigKit 设为开发模式可以在开发阶段输出请求交互的 xml 与 json 数据
 		ApiConfigKit.setDevMode(me.getDevMode());
 		
 	}
 	
 	public void configRoute(Routes me) {
-		me.add("/", IndexController.class);
+//		me.add("/", IndexController.class);
 		me.add("/user", UserController.class);
+		me.add("/directAnser", DirectAnswerControlle.class); 
 		me.add("/direct", DirectControlle.class);
 		me.add("/msg", WeixinMsgController.class);
 		me.add("/api", WeixinApiController.class, "/api");
@@ -76,6 +80,14 @@ public class Conf extends JFinalConfig{
 		arp.addMapping("direct_type", DirectType.class);
 		arp.addMapping("user", User.class);
 		arp.addMapping("user_direct", UserDirect.class);
+		arp.addMapping("direct_seeding", DirectSeeding.class);
+		
+		/****************************************
+		 *集群redis 
+		 */
+		// 用于缓存bbs模块的redis服务
+		RedisPlugin seedingRedis = new RedisPlugin("direct", "115.29.113.54",6379,25200);  //七天失效
+		me.add(seedingRedis);
 	}
 	
 	public void configInterceptor(Interceptors me) {

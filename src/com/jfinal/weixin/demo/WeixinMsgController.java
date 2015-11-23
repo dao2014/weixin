@@ -24,12 +24,13 @@ import com.jfinal.weixin.sdk.msg.in.event.InQrCodeEvent;
 import com.jfinal.weixin.sdk.msg.in.event.InTemplateMsgEvent;
 import com.jfinal.weixin.sdk.msg.in.speech_recognition.InSpeechRecognitionResults;
 import com.jfinal.weixin.sdk.msg.out.OutImageMsg;
-import com.jfinal.weixin.sdk.msg.out.OutMusicMsg;
 import com.jfinal.weixin.sdk.msg.out.OutNewsMsg;
 import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
+import com.jfinal.weixin.sdk.msg.out.OutVideoMsg;
 import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
 import com.jfinal.weixin.server.UserServer;
 import com.jfinal.weixin.server.impl.UserServerImpl;
+import com.jfinal.weixin.tools.util.StringUtils;
 
 /**
  * 将此 DemoController 在YourJFinalConfig 中注册路由，
@@ -40,13 +41,19 @@ import com.jfinal.weixin.server.impl.UserServerImpl;
 public class WeixinMsgController extends MsgController {
 	private UserServer userServer = new UserServerImpl();
 	public static final Logger log =  Logger.getLogger(WeixinMsgController.class);
-	private static final String helpStr = "\t发送 help 可获得帮助，发送 \"美女\" 可看美女，发送 news 可看新闻，发送 music 可听音乐，你还可以试试发送图片、语音、位置、收藏等信息，看会有什么 。公众号持续更新中，想要更多惊喜欢迎每天关注 ^_^";
-	
+	private static final String helpStr = "直播简介:如果您需要培训,讲课,开会,那么这将是提供给您的一个平台.这是一个可容纳十万以下的听众平台,您可以" +
+										  "随时说,随时听,随时讲!如需要了解请加QQ:785886726 tall:18502007012";
+	private static final String welcon="\t 欢迎来到 94直播 如需要帮助 请输入\"help\"   如果需要了解操作流程请输入\"?\"";
+	private static final String con="\t讲师操作:进入我的空间-->选择直播-->添加直播(进入审查)\n" +
+									"\t后台操作:审查--\n"+
+									"\t听众操作:查看直播-->选择\"立即收听\"(需要输入密码)-->等待直播开始即可! \n";
+	private static final String msgDirect="\t 直播即将开始...!请做好准备!";
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
 	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
 	 */
 	public ApiConfig getApiConfig() {
+		log.info("发送消息::::========================ApiConfig");
 		ApiConfig ac = new ApiConfig();
 		
 		// 配置微信 API 相关常量
@@ -70,83 +77,88 @@ public class WeixinMsgController extends MsgController {
 	 *     本方法仅测试了 OutTextMsg、OutNewsMsg、OutMusicMsg 三种类型的OutMsg，
 	 *     其它类型的消息会在随后的方法中进行测试
 	 */
-	protected void processInTextMsg(InTextMsg inTextMsg) {
+	protected void processInTextMsg(InTextMsg inTextMsg,String sendOpenId,String sendContent) {
+		log.info("进来了::====================================================================");
 		String msgContent = inTextMsg.getContent().trim();
-		// 帮助提示
-		if ("help".equalsIgnoreCase(msgContent) || "帮助".equals(msgContent)) {
+		String openId = inTextMsg.getFromUserName();//当前用户
+		log.info("发送消息::::========================"+sendOpenId+">>>>内容>>>>>>"+msgContent);
+		if(StringUtils.isNull(sendOpenId)){
+			// 帮助提示
+			if ("help".equalsIgnoreCase(msgContent) || "帮助".equals(msgContent)) {
+				OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+				outMsg.setContent(helpStr);
+				render(outMsg);
+			}
+			// 图文消息测试
+			else if ("?".equalsIgnoreCase(msgContent)) {
+				OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+				outMsg.setContent(con);
+				render(outMsg);
+			}else {   // 其它文本消息直接返回原值 + 帮助提示
+				renderOutTextMsg(welcon);
+			}
+		}else{
 			OutTextMsg outMsg = new OutTextMsg(inTextMsg);
-			outMsg.setContent(helpStr);
+			outMsg.setToUserName(sendOpenId);
+			outMsg.setContent(sendContent);
 			render(outMsg);
-		}
-		// 图文消息测试
-		else if ("news".equalsIgnoreCase(msgContent)) {
-			OutNewsMsg outMsg = new OutNewsMsg(inTextMsg);
-			outMsg.addNews("JFinal 1.8 发布，JAVA 极速 WEB+ORM 框架", "现在就加入 JFinal 极速开发世界，节省更多时间去跟女友游山玩水 ^_^", "http://mmbiz.qpic.cn/mmbiz/zz3Q6WSrzq1ibBkhSA1BibMuMxLuHIvUfiaGsK7CC4kIzeh178IYSHbYQ5eg9tVxgEcbegAu22Qhwgl5IhZFWWXUw/0", "http://mp.weixin.qq.com/s?__biz=MjM5ODAwOTU3Mg==&mid=200313981&idx=1&sn=3bc5547ba4beae12a3e8762ababc8175#rd");
-			outMsg.addNews("JFinal 1.6 发布,JAVA极速WEB+ORM框架", "JFinal 1.6 主要升级了 ActiveRecord 插件，本次升级全面支持多数源、多方言、多缓", "http://mmbiz.qpic.cn/mmbiz/zz3Q6WSrzq0fcR8VmNCgugHXv7gVlxI6w95RBlKLdKUTjhOZIHGSWsGvjvHqnBnjIWHsicfcXmXlwOWE6sb39kA/0", "http://mp.weixin.qq.com/s?__biz=MjM5ODAwOTU3Mg==&mid=200121522&idx=1&sn=ee24f352e299b2859673b26ffa4a81f6#rd");
-			render(outMsg);
-		}
-		// 音乐消息测试
-		else if ("music".equalsIgnoreCase(msgContent) || "音乐".equals(msgContent)) {
-			OutMusicMsg outMsg = new OutMusicMsg(inTextMsg);
-			outMsg.setTitle("Listen To Your Heart");
-			outMsg.setDescription("建议在 WIFI 环境下流畅欣赏此音乐");
-			outMsg.setMusicUrl("http://www.jfinal.com/Listen_To_Your_Heart.mp3");
-			outMsg.setHqMusicUrl("http://www.jfinal.com/Listen_To_Your_Heart.mp3");
-			outMsg.setFuncFlag(true);
-			render(outMsg);
-		}
-		else if ("美女".equalsIgnoreCase(msgContent)) {
-			OutNewsMsg outMsg = new OutNewsMsg(inTextMsg);
-			outMsg.addNews(
-					"JFinal 宝贝更新喽",
-					"jfinal 宝贝更新喽，我们只看美女 ^_^",
-					"https://mmbiz.qlogo.cn/mmbiz/KJoUl0sqZFRmRDKeyviaOhQwG7MLcFb9pJTO3kDu9icmxj9uGDaXnvF5ue3GsS9flibV2sH7gFr63UjTbc69Cfkzw/0",
-					"http://mp.weixin.qq.com/s?__biz=MzA4NjM4Mjk2Mw==&mid=206873450&idx=1&sn=07531f67919bc2402f0e146e22632c9f#rd");
-			// outMsg.addNews("秀色可餐", "JFinal Weixin 极速开发就是这么爽，有木有 ^_^", "http://mmbiz.qpic.cn/mmbiz/zz3Q6WSrzq2GJLC60ECD7rE7n1cvKWRNFvOyib4KGdic3N5APUWf4ia3LLPxJrtyIYRx93aPNkDtib3ADvdaBXmZJg/0", "http://mp.weixin.qq.com/s?__biz=MjM5ODAwOTU3Mg==&mid=200987822&idx=1&sn=7eb2918275fb0fa7b520768854fb7b80#rd");
-			
-			render(outMsg);
-		}
-		// 其它文本消息直接返回原值 + 帮助提示
-		else {
-			renderOutTextMsg("\t文本消息已成功接收，内容为： " + inTextMsg.getContent() + "\n\n" + helpStr);
+			outMsg.setToUserName(openId);
+			sendMsg(inTextMsg);
 		}
 	}
 	
 	/**
+	 * 发送成功提示
+	 * @param outMsg
+	 */
+	public void sendMsg(InTextMsg inTextMsg){
+		OutTextMsg outMsg = new OutTextMsg(inTextMsg);
+		outMsg.setContent(ControllerMessage.DIRECT_MSG);
+		render(outMsg);
+	}
+	
+	
+	/**
 	 * 实现父类抽方法，处理图片消息
 	 */
-	protected void processInImageMsg(InImageMsg inImageMsg) {
-		OutImageMsg outMsg = new OutImageMsg(inImageMsg);
-		// 将刚发过来的图片再发回去
-		outMsg.setMediaId(inImageMsg.getMediaId());
-		render(outMsg);
+	protected void processInImageMsg(InImageMsg inImageMsg,String sendOpenId) {
+		String openId = inImageMsg.getFromUserName();//当前用户
+			OutImageMsg outMsg = new OutImageMsg(inImageMsg);
+			// 将刚发过来的图片再发回去
+			outMsg.setMediaId(inImageMsg.getMediaId());
+			outMsg.setToUserName(sendOpenId);
+			render(outMsg);
+			
 	}
 	
 	/**
 	 * 实现父类抽方法，处理语音消息
 	 */
-	protected void processInVoiceMsg(InVoiceMsg inVoiceMsg) {
+	protected void processInVoiceMsg(InVoiceMsg inVoiceMsg,String sendOpenId) {
 		OutVoiceMsg outMsg = new OutVoiceMsg(inVoiceMsg);
 		// 将刚发过来的语音再发回去
 		outMsg.setMediaId(inVoiceMsg.getMediaId());
+		outMsg.setToUserName(sendOpenId);
 		render(outMsg);
 	}
 	
 	/**
 	 * 实现父类抽方法，处理视频消息
 	 */
-	protected void processInVideoMsg(InVideoMsg inVideoMsg) {
-		/* 腾讯 api 有 bug，无法回复视频消息，暂时回复文本消息代码测试
+	protected void processInVideoMsg(InVideoMsg inVideoMsg,String sendOpenId) {
+		/* 腾讯 api 有 bug，无法回复视频消息，暂时回复文本消息代码测试*/
 		OutVideoMsg outMsg = new OutVideoMsg(inVideoMsg);
 		outMsg.setTitle("OutVideoMsg 发送");
 		outMsg.setDescription("刚刚发来的视频再发回去");
+		outMsg.setToUserName(sendOpenId);
 		// 将刚发过来的视频再发回去，经测试证明是腾讯官方的 api 有 bug，待 api bug 却除后再试
 		outMsg.setMediaId(inVideoMsg.getMediaId());
 		render(outMsg);
-		*/
-		OutTextMsg outMsg = new OutTextMsg(inVideoMsg);
-		outMsg.setContent("\t视频消息已成功接收，该视频的 mediaId 为: " + inVideoMsg.getMediaId());
-		render(outMsg);
+		
+//		OutTextMsg outMsg = new OutTextMsg(inVideoMsg);
+//		outMsg.setToUserName(sendOpenId);
+//		outMsg.setContent("\t视频消息已成功接收，该视频的 mediaId 为: " + inVideoMsg.getMediaId());
+//		render(outMsg);
 	}
 	
 	/**

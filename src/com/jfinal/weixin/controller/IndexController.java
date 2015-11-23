@@ -10,6 +10,6 @@ public class IndexController extends BaseControlle{
 		System.out.print("sdfsd");
 		System.out.print("sdfsd");
 		System.out.print("sdfsd");
-		render("/index.html");
+		renderSuccess();
 	}
 }

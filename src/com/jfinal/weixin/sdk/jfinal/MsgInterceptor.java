@@ -26,31 +26,44 @@ public class MsgInterceptor implements Interceptor {
 	
 	private static final Logger log =  Logger.getLogger(MsgInterceptor.class);
 	
-	public void intercept(Invocation ai) {
-		Controller controller = ai.getController();
+	public void intercept(Invocation inv) {
+		log.info("拦截中....");
+		Controller controller = inv.getController();
 		if (controller instanceof MsgController == false)
 			throw new RuntimeException("控制器需要继承 MsgController");
 		
 		try {
 			// 将 ApiConfig 对象与当前线程绑定，以便在后续操作中方便获取该对象： ApiConfigKit.getApiConfig();
 			ApiConfigKit.setThreadLocalApiConfig(((MsgController)controller).getApiConfig());
-			
+			log.info("拦截中....1");
 			// 如果是服务器配置请求，则配置服务器并返回
 			if (isConfigServerRequest(controller)) {
 				configServer(controller);
+				log.info("拦截中....2");
 				return ;
 			}
-			
+			log.info("拦截中....3");
 			// 签名检测
-			if (checkSignature(controller)) {
-				ai.invoke();
-			}
-			else {
-				controller.renderText("check signature failure");
-			}
+			// 对开发测试更加友好
+						if (ApiConfigKit.isDevMode()) {
+							inv.invoke();
+							log.info("拦截中....4");
+						} else {
+//							inv.invoke();
+							// 签名检测
+							if (checkSignature(controller)) {
+								inv.invoke();
+								log.info("拦截中....5");
+							}
+							else {
+								log.info("拦截中....6");
+								controller.renderText("签名验证失败，请确定是微信服务器在发送消息过来");
+							}
+						}
 		}
 		finally {
 			ApiConfigKit.removeThreadLocalApiConfig();
+			log.info("拦截结束....");
 		}
 	}
 	

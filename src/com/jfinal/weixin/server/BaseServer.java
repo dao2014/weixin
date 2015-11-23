@@ -7,6 +7,9 @@ import com.jfinal.plugin.activerecord.Page;
 
 public  interface  BaseServer<M> extends ILoggerFactory{
 	
+	
+	public Page<M> findPage(int start,int end,Object... paras);
+	
 	/**
 	 * 根据ID 删除
 	 * @param id
@@ -33,7 +36,7 @@ public  interface  BaseServer<M> extends ILoggerFactory{
 	 * @param attrs
 	 * @return
 	 */
-	public Page<M> getList(Map<String, Object> attrs);
+	public Page<M> getList(Object... paras);
 	
 	/**
 	 * 保存对象

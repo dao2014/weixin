@@ -2,6 +2,7 @@ jdbcUrl = jdbc:mysql://115.29.113.54/direct_seeding?characterEncoding=utf8&zeroD
 driverClass=com.mysql.jdbc.Driver
 user=root
 password=123456
+devMode = true
 maxPoolSize=10
 minPoolSize=1
 initialPoolSize=1
