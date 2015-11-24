@@ -27,7 +27,6 @@ public class MsgInterceptor implements Interceptor {
 	private static final Logger log =  Logger.getLogger(MsgInterceptor.class);
 	
 	public void intercept(Invocation inv) {
-		log.info("拦截中....");
 		Controller controller = inv.getController();
 		if (controller instanceof MsgController == false)
 			throw new RuntimeException("控制器需要继承 MsgController");
@@ -35,35 +34,29 @@ public class MsgInterceptor implements Interceptor {
 		try {
 			// 将 ApiConfig 对象与当前线程绑定，以便在后续操作中方便获取该对象： ApiConfigKit.getApiConfig();
 			ApiConfigKit.setThreadLocalApiConfig(((MsgController)controller).getApiConfig());
-			log.info("拦截中....1");
+			
 			// 如果是服务器配置请求，则配置服务器并返回
 			if (isConfigServerRequest(controller)) {
 				configServer(controller);
-				log.info("拦截中....2");
 				return ;
 			}
-			log.info("拦截中....3");
-			// 签名检测
+			
 			// 对开发测试更加友好
-						if (ApiConfigKit.isDevMode()) {
-							inv.invoke();
-							log.info("拦截中....4");
-						} else {
-//							inv.invoke();
-							// 签名检测
-							if (checkSignature(controller)) {
-								inv.invoke();
-								log.info("拦截中....5");
-							}
-							else {
-								log.info("拦截中....6");
-								controller.renderText("签名验证失败，请确定是微信服务器在发送消息过来");
-							}
-						}
+			if (ApiConfigKit.isDevMode()) {
+				inv.invoke();
+			} else {
+				// 签名检测
+				if (checkSignature(controller)) {
+					inv.invoke();
+				}
+				else {
+					controller.renderText("签名验证失败，请确定是微信服务器在发送消息过来");
+				}
+			}
+			
 		}
 		finally {
 			ApiConfigKit.removeThreadLocalApiConfig();
-			log.info("拦截结束....");
 		}
 	}
 	
@@ -107,8 +100,8 @@ public class MsgInterceptor implements Interceptor {
 		// 通过 echostr 判断请求是否为配置微信服务器回调所需的 url 与 token
 		String echostr = c.getPara("echostr");
 		String signature = c.getPara("signature");
-        String timestamp = c.getPara("timestamp");
-        String nonce = c.getPara("nonce");
+		String timestamp = c.getPara("timestamp");
+		String nonce = c.getPara("nonce");
 		boolean isOk = SignatureCheckKit.me.checkSignature(signature, timestamp, nonce);
 		if (isOk)
 			c.renderText(echostr);

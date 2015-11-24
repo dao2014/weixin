@@ -11,14 +11,14 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
  */
 public class ApiInterceptor implements Interceptor {
 	
-	public void intercept(Invocation ai) {
-		Controller controller = ai.getController();
+	public void intercept(Invocation inv) {
+		Controller controller = inv.getController();
 		if (controller instanceof ApiController == false)
 			throw new RuntimeException("控制器需要继承 ApiController");
 		
 		try {
 			ApiConfigKit.setThreadLocalApiConfig(((ApiController)controller).getApiConfig());
-			ai.invoke();
+			inv.invoke();
 		}
 		finally {
 			ApiConfigKit.removeThreadLocalApiConfig();

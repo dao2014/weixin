@@ -10,7 +10,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.jfinal.weixin.sdk.utils.JsonUtils;
 
 /**
  * 封装 API 响应结果，将 json 字符串转换成 java 数据类型
@@ -39,13 +40,20 @@ public class ApiResult {
 		this.json = jsonStr;
 		
 		try {
-			Map<String, Object> temp = new ObjectMapper().readValue(jsonStr, Map.class);
+			Map<String, Object> temp = JsonUtils.decode(jsonStr, Map.class);
 			this.attrs = temp;
 			
 			refreshAccessTokenIfInvalid();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * 通过 json 创建 ApiResult 对象，等价于 new ApiResult(jsonStr)
+	 */
+	public static ApiResult create(String jsonStr) {
+		return new ApiResult(jsonStr);
 	}
 	
 	/**
@@ -78,7 +86,7 @@ public class ApiResult {
 	}
 	
 	public Integer getErrorCode() {
-		return (Integer)attrs.get("errcode");
+		return getInt("errcode");
 	}
 	
 	public String getErrorMsg() {
@@ -101,11 +109,13 @@ public class ApiResult {
 	}
 	
 	public Integer getInt(String name) {
-		return (Integer)attrs.get(name);
+		Number number = (Number) attrs.get(name);
+		return number == null ? null : number.intValue();
 	}
 	
 	public Long getLong(String name) {
-		return (Long)attrs.get(name);
+		Number number = (Number) attrs.get(name);
+		return number == null ? null : number.longValue();
 	}
 	
 	public BigInteger getBigInteger(String name) {

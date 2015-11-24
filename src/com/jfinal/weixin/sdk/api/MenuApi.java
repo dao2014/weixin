@@ -20,15 +20,15 @@ public class MenuApi {
 	 * 查询菜单
 	 */
 	public static ApiResult getMenu() {
-		String jsonResult = HttpKit.get(getMenu + AccessTokenApi.getAccessToken().getAccessToken());
+		String jsonResult = HttpKit.get(getMenu + AccessTokenApi.getAccessTokenStr());
 		return new ApiResult(jsonResult);
 	}
 	
 	/**
 	 * 创建菜单
 	 */
-	public ApiResult createMenu(String jsonStr) {
-		String jsonResult = HttpKit.post(createMenu + AccessTokenApi.getAccessToken().getAccessToken(), jsonStr);
+	public static ApiResult createMenu(String jsonStr) {
+		String jsonResult = HttpKit.post(createMenu + AccessTokenApi.getAccessTokenStr(), jsonStr);
 		return new ApiResult(jsonResult);
 	}
 }

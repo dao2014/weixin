@@ -7,7 +7,6 @@
 package com.jfinal.weixin.sdk.kit;
 
 import java.util.Arrays;
-
 import com.jfinal.core.Controller;
 import com.jfinal.kit.HashKit;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;

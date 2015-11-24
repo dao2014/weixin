@@ -6,8 +6,6 @@
 
 package com.jfinal.weixin.sdk.msg.in.event;
 
-import com.jfinal.weixin.sdk.msg.in.InMsg;
-
 /**
 	上报地理位置事件
 	<xml>
@@ -21,25 +19,16 @@ import com.jfinal.weixin.sdk.msg.in.InMsg;
 			<Precision>119.385040</Precision>
 	</xml>
  */
-public class InLocationEvent extends InMsg {
+public class InLocationEvent extends EventInMsg {
 	
-	private String event;
 	private String latitude;
 	private String longitude;
 	private String precision;
 	
-	public InLocationEvent(String toUserName, String fromUserName, Integer createTime, String msgType) {
-		super(toUserName, fromUserName, createTime, msgType);
+	public InLocationEvent(String toUserName, String fromUserName, Integer createTime, String msgType, String event) {
+		super(toUserName, fromUserName, createTime, msgType, event);
 	}
-	
-	public String getEvent() {
-		return event;
-	}
-	
-	public void setEvent(String event) {
-		this.event = event;
-	}
-	
+
 	public String getLatitude() {
 		return latitude;
 	}
