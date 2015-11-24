@@ -13,7 +13,7 @@
 		<version>7</version>
 	</parent>
 	
-	<repositories>
+	<repositories> 
 	</repositories> 
 	<scm>
 		<connection>scm:git:git@git.oschina.net:jfinal/jfinal-weixin.git</connection>

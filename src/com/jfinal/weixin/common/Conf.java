@@ -1,5 +1,7 @@
 package com.jfinal.weixin.common;
 
+import redis.clients.jedis.JedisPoolConfig;
+
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -12,7 +14,6 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.redis.RedisPlugin;
 import com.jfinal.weixin.controller.DirectAnswerControlle;
 import com.jfinal.weixin.controller.DirectControlle;
-import com.jfinal.weixin.controller.IndexController;
 import com.jfinal.weixin.controller.UserController;
 import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
@@ -86,7 +87,20 @@ public class Conf extends JFinalConfig{
 		 *集群redis 
 		 */
 		// 用于缓存bbs模块的redis服务
-		RedisPlugin seedingRedis = new RedisPlugin("direct", "115.29.113.54",6379,25200);  //七天失效
+//		RedisPlugin seedingRedis = new RedisPlugin("direct", "115.29.113.54",6379,25200);  //七天失效
+		RedisPlugin seedingRedis = new RedisPlugin("direct", "10.163.197.17",6379,25200);  //七天失效
+		JedisPoolConfig jpl = seedingRedis.getJedisPoolConfig();
+		//连接超时
+		jpl.setMaxWaitMillis(1000*3);
+		//最大空闲连接数, 默认8个
+		jpl.setMaxIdle(20);
+		// 设置最小空闲连接数或者说初始化连接数
+		jpl.setMinIdle(10);
+		// 多长空闲时间之后回收空闲连接
+		jpl.setMinEvictableIdleTimeMillis(60000);
+		//最大连接
+		jpl.setMaxTotal(100);
+		jpl.setTestOnBorrow(true);
 		me.add(seedingRedis);
 	}
 	

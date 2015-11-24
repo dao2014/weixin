@@ -16,6 +16,8 @@ import com.jfinal.core.Controller;
 import com.jfinal.ext.interceptor.NotAction;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.log.Logger;
+import com.jfinal.plugin.redis.Cache;
+import com.jfinal.plugin.redis.Redis;
 import com.jfinal.weixin.common.ControllerMessage;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
@@ -78,12 +80,17 @@ public abstract class MsgController extends Controller {
 		InMsg msg = getInMsg();
 		openId = msg.getFromUserName();//当前的openId
 		log.info("收到的信息 发送人OpenId:"+openId);
-		if(searchDirect(msg,openId)){
+		log.info("===============redi 链接...");
+		Cache newsCache = Redis.use("direct");
+		Jedis jedis = newsCache.getJedis();
+		if(searchDirect(msg,openId,jedis)){
+			newsCache.close(jedis);
 			log.info("==============================服务发送成功:");
 //			processInTextMsg((InTextMsg)msg,null,null);
 			//提示 互动成功!
 			return;
-		}else if(searchLesson(msg,openId)){
+		}else if(searchLesson(msg,openId,jedis)){
+			newsCache.close(jedis);
 			log.info("==============================接收人发送成功:");
 //			processInTextMsg((InTextMsg)msg,null,null);
 			return;
@@ -113,6 +120,8 @@ public abstract class MsgController extends Controller {
 			processInTemplateMsgEvent((InTemplateMsgEvent)msg);
 		else if (msg instanceof InShakearoundUserShakeEvent)
 			processInShakearoundUserShakeEvent((InShakearoundUserShakeEvent)msg);
+		if(jedis!=null)
+			newsCache.close(jedis);
 	}
 	
 	/**
@@ -120,14 +129,24 @@ public abstract class MsgController extends Controller {
 	 * @param OpenId  
 	 * @return
 	 */
-	public boolean searchDirect(InMsg massge,String openId){
+	public boolean searchDirect(InMsg massge,String openId,Jedis cache){
+		InTextMsg im = new InTextMsg(massge.getToUserName(), massge.getFromUserName(), massge.getCreateTime(), "text");
 		boolean msg = true;
 		String nowOpenId = "";// 当前用户redis OpenId
 		nowOpenId = openId + ControllerMessage.OPEN_ID_SEELING;
-		log.info("===============redi 链接...");
-		Jedis cache = JetisUtil.getJedis();
 		log.info("================主播 获取 缓存list数据:"+"redi 开始获取数据...");
-		List<String> list = cache.lrange(nowOpenId, 0, cache.llen(nowOpenId));
+		List<String> list = null;
+		try {
+			if(cache!=null){
+				log.info("==============查看redis是否为空 获取数据==============..."+cache);
+				list = cache.lrange(nowOpenId, 0, cache.llen(nowOpenId));
+				log.info("=========================..."+cache);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+		}
 		log.info("==========收到缓存list数据:" + list.size() + "======" + list);
 		if (!StringUtils.isNull(list)) {
 			for (String directIdR : list) {
@@ -149,7 +168,7 @@ public abstract class MsgController extends Controller {
 						&& minRightTime > 0) { // 是否 即将开始直播
 					log.info("==========================即将开始直播" + "======" + minRightTime);
 					// 提示 即将开始直播语音
-					processInTextMsg((InTextMsg) massge, openId, minRightTime
+					processInTextMsg(im, openId, minRightTime
 							+ "" + ControllerMessage.DIRECT_MSG_RIGHT_START_MSG);
 					break;
 				} else if (minRightTime <= 0 && eminEndTime >= 0)  { // 说明开始直播了
@@ -222,13 +241,13 @@ public abstract class MsgController extends Controller {
 						cache.lpush(openId + ControllerMessage.LESSON_CONTENT,
 								sb.toString());
 						if (minRightTime >= ControllerMessage.DIRECT_MSG_START) {
-							processInTextMsg((InTextMsg) massge, openId,
+							processInTextMsg(im, openId,
 									ControllerMessage.DIRECT_MSG_START_MSG);
 							// 提示 直播已经开始
 						} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_RIGHT_END_MSG) {
 							// 提示 直播 即将结束
 							processInTextMsg(
-									(InTextMsg) massge,
+									im,
 									openId,
 									eminEndTime
 									+ ""
@@ -241,7 +260,7 @@ public abstract class MsgController extends Controller {
 				} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime < 0) { // 直播已
 																				// 结束
 					// 假设用户 点击
-					processInTextMsg((InTextMsg) massge, openId,
+					processInTextMsg(im, openId,
 							ControllerMessage.DIRECT_MSG_END_MSG);
 					cache.lrem(nowOpenId, -2, directIdR);
 					break;
@@ -250,10 +269,14 @@ public abstract class MsgController extends Controller {
 					log.info("====================删除缓存!!=============");		// 恢复正常,正常提示
 					cache.lrem(nowOpenId, -2, directIdR);
 					log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播77!!=================距离结束时间"+eminEndTime);
+					if (massge instanceof InTextMsg)
+						im.setContent(((InTextMsg) massge).getContent());
 					processInTextMsg((InTextMsg)massge,null,null);
 				}else{
+					if (massge instanceof InTextMsg)
+						im.setContent(((InTextMsg) massge).getContent());
 					log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播!!=============距离结束时间"+eminEndTime);
-					processInTextMsg((InTextMsg)massge,null,null);
+					processInTextMsg(im,null,null);
 				}
 			}
 			msg = true;
@@ -270,14 +293,19 @@ public abstract class MsgController extends Controller {
 	 * 获取 是否听课的用户
 	 * @return
 	 */
-	public boolean searchLesson(InMsg massge,String lessonOpenIds){
+	public boolean searchLesson(InMsg massge,String lessonOpenIds,Jedis cache){
+		InTextMsg im = new InTextMsg(massge.getToUserName(), massge.getFromUserName(), massge.getCreateTime(), "text");
 		boolean msg = true;
-		log.info("==================redi 开始获取链接...");
-		Jedis cache = JetisUtil.getJedis();
 		String nowlessonOpenIdKey = ""; // 当前用户 redis open
 		nowlessonOpenIdKey = lessonOpenIds + ControllerMessage.LESSON_ID;
 		log.info("==================听众  获取 缓存list数据:"+"redi 开始获取数据...");
-		String lessonInfo = cache.get(nowlessonOpenIdKey);
+		String lessonInfo=null;
+		try {
+			lessonInfo = cache.get(nowlessonOpenIdKey);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		log.info("==================听众  获取 缓存String数据:"+lessonInfo);
 		if (!StringUtils.isNull(lessonInfo)) { // 说明 该用户已经关注了
 			String[] directInfo = lessonInfo.split(",");
@@ -296,7 +324,7 @@ public abstract class MsgController extends Controller {
 					&& minRightTime > 0) { // 是否 即将开始直播
 				// 提示 即将开始直播语音
 				log.info("==========================即将开始直播" + "======" + minRightTime);
-				processInTextMsg((InTextMsg) massge, lessonOpenIds,
+				processInTextMsg(im, lessonOpenIds,
 						minRightTime + ""
 								+ ControllerMessage.DIRECT_MSG_RIGHT_START_MSG);
 			} else if (minRightTime <= 0 && eminEndTime >= 0) { // 说明开始直播了
@@ -330,7 +358,7 @@ public abstract class MsgController extends Controller {
 				}
 
 				if (!sendStatus) { // 监控数据非法
-					processInTextMsg((InTextMsg) massge, lessonOpenIds,
+					processInTextMsg(im, lessonOpenIds,
 							ControllerMessage.DIRECT_MSG_ERROR);
 				} else { // 保存数据
 					StringBuffer sb = new StringBuffer();
@@ -363,13 +391,13 @@ public abstract class MsgController extends Controller {
 				}
 				if (minRightTime >= ControllerMessage.DIRECT_MSG_START && eminEndTime < 0 ) {
 					log.info("==========================提示 已经开始直播" + "======" + minRightTime);
-					processInTextMsg((InTextMsg) massge, lessonOpenIds,
+					processInTextMsg(im, lessonOpenIds,
 							ControllerMessage.DIRECT_MSG_START_MSG);
 					// 提示 直播已经开始
 				} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_RIGHT_END_MSG) {
 					log.info("==========================提示 直播即将结束" + "======" + eminEndTime);
 					// 提示 直播 即将结束
-					processInTextMsg((InTextMsg) massge, lessonOpenIds,
+					processInTextMsg(im, lessonOpenIds,
 							eminEndTime + ""
 									+ ControllerMessage.DIRECT_MSG_RIGHT_END);
 				}else{
@@ -379,19 +407,20 @@ public abstract class MsgController extends Controller {
 			} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime <=0) { // 直播已
 				log.info("====================直播结束!!=============");												// 结束
 				// 假设用户 点击
-				processInTextMsg((InTextMsg) massge, lessonOpenIds,
+				processInTextMsg(im, lessonOpenIds,
 						ControllerMessage.DIRECT_MSG_END_MSG);
 				log.info("====================删除缓存22222!!=============");	
 				cache.lrem(nowlessonOpenIdKey, -2, lessonInfo);
-			} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_END) { // 如果缓存
-																			// 还没有删除掉,就删除
-				log.info("====================删除缓存!!=============");					// 恢复正常,正常提示
+			} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_END) { // 如果缓存// 恢复正常,正常提示
 				cache.lrem(nowlessonOpenIdKey, -2, lessonInfo);
-				log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播!!=============距离结束时间"+eminEndTime);
-//				processInTextMsg((InTextMsg)massge,null,null);
+				if (massge instanceof InTextMsg)
+					im.setContent(((InTextMsg) massge).getContent());
+				processInTextMsg(im,null,null);
 			}else{
+				if (massge instanceof InTextMsg)
+					im.setContent(((InTextMsg) massge).getContent());
 				log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播!!=============距离结束时间"+eminEndTime);
-//				processInTextMsg((InTextMsg)massge,null,null);
+				processInTextMsg(im,null,null);
 			}
 			msg = true;
 		} else {

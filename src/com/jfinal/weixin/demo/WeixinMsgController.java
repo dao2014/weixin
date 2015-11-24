@@ -85,7 +85,7 @@ public class WeixinMsgController extends MsgController {
 	 */
 	protected void processInTextMsg(InTextMsg inTextMsg,String sendOpenId,String sendContent) {
 		log.info("进来了::====================================================================");
-		String msgContent = inTextMsg.getContent().trim();
+		String msgContent = inTextMsg.getContent();
 		String openId = inTextMsg.getFromUserName();//当前用户
 		log.info("发送消息::::========================"+sendOpenId+">>>>内容>>>>>>"+msgContent);
 		if(StringUtils.isNull(sendOpenId)){
