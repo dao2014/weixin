@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html ng-app='OrangeApp'>
+<head>
+  <title>支付宝</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="max-age=0" />
+  <meta name="apple-touch-fullscreen" content="yes" />
+  <meta name="Description" content="橙商" />
+  <meta name="Keywords" content="橙商" />
+  <meta name="renderer" content="webkit">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- <link rel="stylesheet" type="text/css" href="css/index.css" />
+  <script type="text/javascript" src='../app/framework/jquery/jquery.js'></script> 
+  -->
+  <link rel="stylesheet" type="text/css" href="../app/build/OrangeMallApp.min.css" />
+  <link rel="shortcut icon" href="img/app_icon.png">
+  <style type="text/css">
+  	.wrapper-main{
+  		padding: 0;
+  		margin:0 15px;
+  	}
+  	.first{
+  		border-bottom: 1px solid #EFEFEF;
+  		padding: 40px 0;
+      text-align: center;
+  	}
+    .first img{
+      width: 120px;
+    }
+  	.first p{
+  		text-align: center;
+  	}
+  	.first .p_1{
+      margin-top: 15px;
+  		color: #606060;
+  		font-size: 20px;
+  		line-height: 20px;
+  		font-weight: 600;
+  	}
+  	.first .p_2{
+  		color: #939393;
+  		font-size: 12px;
+  		line-height: 12px;  
+  		margin-top: 15px;
+  	}
+  	.alipay-over{
+  		color: #FEFEFE;
+  		background-color: #FF9600;
+  		width: 120px;
+  		padding: 5px 0;
+  		font-size: 14px;
+  		border-radius: 5px;
+  		display: block;
+  		text-align: center;
+  		margin:10px auto;
+  	}
+    .alipay-group{
+      width: 100%;
+      padding: 20px 0;
+    }
+    .alipay-group:after,
+    .alipay-group div:after{
+      content:' ';
+      display: table;
+      clear:both;
+    }
+    .alipay-group>div{
+      height: 150px;
+      display: inline-block;
+      float: left;
+      width: 50%;
+      text-align: center;
+
+    }
+    .alipay-group>div>div{
+      height: 120px;
+      background-position: 50%;
+      background-repeat: no-repeat;
+    }
+    .alipay-group >div .i-1{
+      background-image: url(./alipay/i-1.png);
+      background-size: 50px;
+    }
+    .alipay-group >div .i-2{
+      background-image: url(./alipay/i-2.png);
+      background-size: 100px;
+    }
+    .alipay-group img{
+      margin-top: 20px;
+      display: inline-block;
+    }
+    .alipay-group .i-1-t{
+      width: 80px;
+    }
+    .alipay-group .i-2-t{
+      width: 170px;
+    }
+    #pos-right-top{
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 150px;
+      height: 53px;
+      background-image: url(./alipay/m.png);
+      background-size: 100% auto;
+      display: none;
+      z-index: 200;
+      color: #DEE4E4;
+      font-size: 14px;
+      line-height: 60px;
+    }
+    #pos-right-top i{
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      background-image: url(./alipay/i-b.png);
+      background-size: 18px auto;
+      float: left;
+      margin: 21px 5px 0px 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="pos-right-top">
+    <i></i>
+    在浏览器中打开
+  </div>
+	<div class="wrapper-main">
+		<div class="first">
+      <img src="./alipay/head.png" alt="">
+			<p class="p_1">如何通过支付宝支付订单</p>
+			<p class="p_2">由于微信屏蔽支付宝，您需要按照以下步骤操作。</p>
+		</div>
+		<div>
+      <div class='alipay-group'>
+        <div>
+          <div class="i-1"></div>
+          <img class="i-1-t" src="./alipay/i-1-t.png" alt="">
+        </div>
+        <div>
+          <div class="i-2"></div>
+          <img class="i-2-t"  src="./alipay/i-2-t.png" alt="">
+        </div>
+      </div>
+			<a class="alipay-over" onclick="document.getElementById('pos-right-top').style.display='block';">去支付</a>
+		</div>
+	</div>
+</body>
+</html>

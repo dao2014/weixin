@@ -1,0 +1,41 @@
+.address-group {
+  margin-top: 10px;
+  border-bottom: 1px solid #eaeaea;
+  border-top: 1px solid #eaeaea; }
+
+.address_items {
+  position: relative;
+  height: 70px;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #fff; }
+  .address_items:last-child {
+    border-bottom: none; }
+
+.address-group-header {
+  height: 38px;
+  padding: 12px 15px 0 15px; }
+  .address-group-header .phone {
+    font-size: 15px;
+    margin-right: 20px; }
+  .address-group-header > p:last-child {
+    margin-top: 10px;
+    margin-right: 15px; }
+  .address-group-header .left {
+    font-size: 15px;
+    color: #000; }
+  .address-group-header .address .left {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis; }
+
+.address_content {
+  margin-top: 10px; }
+  .address_content .form-items {
+    margin-left: 0;
+    padding-left: 10px; }
+    .address_content .form-items:first-child {
+      border-top: 1px solid #DBDBDB; }
+
+/*# sourceMappingURL=address.css.map */

@@ -1,0 +1,8 @@
+.qrcode-main {
+  position: relative;
+  width: 100%; }
+  .qrcode-main > img {
+    width: 100%;
+    height: 100%; }
+
+/*# sourceMappingURL=qrcode.css.map */

@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAGC,kBAAM;EACL,KAAK,EAAE,IAAI;EACX,SAAS,EAAE,IAAI;EACf,OAAO,EAAC,QAAQ;AAEjB,kBAAM;EACL,SAAS,EAAE,IAAI;EACf,OAAO,EAAE,MAAM;EACf,KAAK,EAAE,OAAO;EACd,aAAa,EAAE,GAAG;AAEnB,4BAAgB;EACf,OAAO,EAAE,MAAM;EACf,gBAAgB,EAAE,OAAO",
+"sources": ["../scss/sales.scss"],
+"names": [],
+"file": "sales.css"
+}

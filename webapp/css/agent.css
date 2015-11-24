@@ -1,0 +1,60 @@
+.agent-search {
+  padding: 10px 0; }
+  .agent-search .search input[type=search] {
+    background-color: #fff;
+    color: #373737; }
+  .agent-search .search input:-ms-placeholder,
+  .agent-search .search input:-webkit-placeholder,
+  .agent-search .search input:-moz-placeholder {
+    color: #D9D9D9; }
+
+.agent-items-group {
+  background-color: #fff;
+  border-width: 1px 0;
+  border-color: #DBDBDB;
+  border-style: solid; }
+
+.agent-items-list {
+  position: relative;
+  line-height: 41px;
+  margin-left: 15px;
+  border-bottom: 1px solid #DBDBDB; }
+  .agent-items-list:last-child {
+    border-bottom: none; }
+  .agent-items-list .agent-img {
+    width: 40px;
+    height: 42px;
+    margin-right: 20px;
+    display: inline-block;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    float: left; }
+  .agent-items-list .agent-name {
+    color: #373737;
+    font-size: 14px;
+    line-height: 14px;
+    display: inline-block;
+    width: 80px; }
+  .agent-items-list .agent-num {
+    background-color: #EEEEEE;
+    padding: 4px 9px;
+    display: inline-block;
+    border-radius: 20px;
+    font-size: 13px;
+    line-height: 13px;
+    color: #F85145; }
+  .agent-items-list .agent-income {
+    display: inline-block;
+    margin-left: 40px;
+    text-align: right; }
+    .agent-items-list .agent-income span {
+      font-size: 12px;
+      color: #12CE85; }
+
+.agent-items-list.big {
+  padding: 5px 0; }
+
+/*# sourceMappingURL=agent.css.map */

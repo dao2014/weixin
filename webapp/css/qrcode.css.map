@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAEA,YAAY;EACX,QAAQ,EAAE,QAAQ;EAClB,KAAK,EAAC,IAAI;EACV,kBAAI;IACH,KAAK,EAAC,IAAI;IACV,MAAM,EAAC,IAAI",
+"sources": ["../scss/qrcode.scss"],
+"names": [],
+"file": "qrcode.css"
+}

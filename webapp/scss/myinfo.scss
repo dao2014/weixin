@@ -1,0 +1,43 @@
+
+
+
+
+.myinfo-main{
+	margin-top: 10px;
+	.form-label{
+		color: #424242;
+	}
+	.form-input>input{
+		color: #8E8E8E;
+	}
+	.form-items{
+		margin-left: 0;
+		padding-left: 15px;
+		border-bottom: 1px solid #EEEEEE;
+	}
+}
+// .header-img-input{
+// 	border-top: 1px solid #EEEEEE;
+// 	.form-input{
+// 		height: 92px;
+// 		line-height: 92px;
+// 		padding: 10px 0;
+// 	}
+// 	.form-label{
+// 		line-height: 110px;
+// 	}
+// 	img{
+// 		margin-left: 20px;
+// 	}
+// }
+.bind-phone-btn{
+	position: absolute;
+	right: 15px;
+	top: 9px;
+	background-color: transparent;
+	border:1px solid #ED6D00;
+	color: #ED6D00;
+	padding: 5px 8px;
+	border-radius: 3px;
+	-webkit-border-radius:3px;
+}

@@ -1,0 +1,114 @@
+
+// .home-header{
+// 	background-color: #fff;
+// 	border-width:0 0 1px 0;
+// 	border-style: solid;
+// 	border-color: #DBDBDB;
+// }
+// .home-header .home-list{
+// 	display:-moz-box; 
+// 	display:-webkit-box;
+// 	display:box;
+// 	width:100%;
+// }
+// .home-header .home-list>div{
+// 	-moz-box-flex:1.0; 
+// 	-webkit-box-flex:1.0; 
+// 	box-flex:1.0;
+// 	text-align: center;
+// 	padding: 10px 0;
+// }
+// .home-header .home-list>div .home-text{
+// 	font-size: 13px;
+// 	color: #373737;
+// 	margin-top: 5px;
+// 	display: inline-block;
+// }
+
+
+.home-img-blur {
+	.img{
+		height: 100px;
+		background-size: 100% auto;
+	  	opacity: .9;
+	}
+	p{
+		position: absolute;
+		top: 0;
+		width: 100%;
+		font-size:20px;
+		color: #fff;
+		text-align: center;
+		line-height: 30px;
+		height: 30px;
+	}
+}
+.home-my-info{
+	position: relative;
+	background:#fff;
+	height: 55px;
+	border-bottom:1px solid #DBDBDB;
+	border-top:1px solid #DBDBDB;
+	.header-img{
+		margin-top: -45px;
+		margin-left: 15px;
+		float:left;
+	}
+	.wx-name{
+		color: #373737;
+		font-size: 20px;
+		display: inline-block;
+		margin: 5px 0 0 10px;
+	}
+}
+.header-img{
+	display: inline-block;
+	width: 90px;
+	height: 90px;
+	border-radius: 50%;
+	-webkit-border-radius:50%;
+	border: 1px solid #fff;
+}
+.home-group{
+	margin-top: 10px;
+	background-color: #fff;
+	.home-list-items:first-child{
+		border-top: 1px solid #DBDBDB
+	}
+	.home-list-items{
+		position: relative;
+		display: block;
+		height: 45px;
+		line-height: 45px;
+		border-style: solid;
+		border-width: 0 0 1px 0;
+		border-color: #DBDBDB;
+
+	}
+	.home-list-items p{
+		display: inline-block;
+		color: #373737;
+		font-size: 15px;
+	}
+	.home-list-items span{
+		color: #ED6E02;
+		font-size: 14px;
+		display: inline-block;
+		margin-right: 35px;
+	}
+}
+.home-header+.home-group{
+	margin-top: -1px;
+}
+.home-my-info+.home-header{
+	border-top:1px solid #DBDBDB;
+	margin-top: 10px;
+}
+// .code-btn{
+// 	position: absolute;
+// 	right: 10px;
+// 	top: 5px;
+// }
+// .income-btn.regis-btn{
+// 	margin-top: 20px;
+// }
