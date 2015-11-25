@@ -16,6 +16,7 @@ import com.jfinal.weixin.sdk.msg.in.InImageMsg;
 import com.jfinal.weixin.sdk.msg.in.InLinkMsg;
 import com.jfinal.weixin.sdk.msg.in.InLocationMsg;
 import com.jfinal.weixin.sdk.msg.in.InMsg;
+import com.jfinal.weixin.sdk.msg.in.InShortVideoMsg;
 import com.jfinal.weixin.sdk.msg.in.InTextMsg;
 import com.jfinal.weixin.sdk.msg.in.InVideoMsg;
 import com.jfinal.weixin.sdk.msg.in.InVoiceMsg;
@@ -72,6 +73,8 @@ public class InMsgParaser {
         	return parseInLinkMsg(root, toUserName, fromUserName, createTime, msgType);
         if ("event".equals(msgType))
         	return parseInEvent(root, toUserName, fromUserName, createTime, msgType);
+        if ("shortvideo".equals(msgType))	 //支持小视频
+			return parseInShortVideoMsg(root, toUserName, fromUserName, createTime, msgType);
         throw new RuntimeException("无法识别的消息类型，请查阅微信公众平台开发文档");
 	}
 	
@@ -107,6 +110,14 @@ public class InMsgParaser {
 			msg.setRecognition(recognition);			// 与 InVoiceMsg 唯一的不同之处
 			return msg;
 		}
+	}
+	
+	private static InMsg parseInShortVideoMsg(Element root, String toUserName, String fromUserName, Integer createTime, String msgType) {
+		InShortVideoMsg msg = new InShortVideoMsg(toUserName, fromUserName, createTime, msgType);
+		msg.setMediaId(root.elementText("MediaId"));
+		msg.setThumbMediaId(root.elementText("ThumbMediaId"));
+		msg.setMsgId(root.elementText("MsgId"));
+		return msg;
 	}
 	
 	private static InMsg parseInVideoMsg(Element root, String toUserName, String fromUserName, Integer createTime, String msgType) {

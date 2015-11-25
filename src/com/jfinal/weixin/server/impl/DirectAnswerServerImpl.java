@@ -125,7 +125,8 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 		int sent = DateUtils.dateSecondDiff(new Date(),end );
 		log.info("用户收听失效时间:" + sent);
 		//所有听众信息
-		jedis.setex(openId+ControllerMessage.LESSON_ID, DateUtils.dateSecondDiff(new Date(),end ), directIdkey+","+jsOpenId);
+		if(sent>0)
+			jedis.setex(openId+ControllerMessage.LESSON_ID, sent, directIdkey+","+jsOpenId);
 		cache.close(jedis);
 		return true;
 	}

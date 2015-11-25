@@ -41,6 +41,7 @@ public class CustomServiceApi {
     private static ApiResult sendMsg(Map<String, Object> message) {
         String accessToken = AccessTokenApi.getAccessTokenStr();
         String jsonResult = HttpKit.post(customMessageUrl + accessToken, JsonUtils.toJson(message));
+        System.out.println("======================================================"+jsonResult);
         return new ApiResult(jsonResult);
     }
 
@@ -92,8 +93,8 @@ public class CustomServiceApi {
 
         Map<String, Object> voice = new HashMap<String, Object>();
         voice.put("media_id", media_id);
-
         json.put("voice", voice);
+
         return sendMsg(json);
     }
 
@@ -105,7 +106,7 @@ public class CustomServiceApi {
      * @param description
      * @return
      */
-    public static ApiResult sendVideo(String openId, String media_id, String title, String description) {
+    public static ApiResult sendVideo(String openId, String media_id,String thumbMediaId, String title, String description) {
         Map<String, Object> json = new HashMap<String, Object>();
         json.put("touser", openId);
         json.put("msgtype", "video");
@@ -114,7 +115,7 @@ public class CustomServiceApi {
         video.put("media_id", media_id);
         video.put("title", title);
         video.put("description", description);
-
+        video.put("thumb_media_id", thumbMediaId);
         json.put("video", video);
         return sendMsg(json);
     }

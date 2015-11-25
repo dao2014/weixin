@@ -48,7 +48,6 @@ import com.jfinal.weixin.sdk.msg.in.speech_recognition.InSpeechRecognitionResult
 import com.jfinal.weixin.sdk.msg.out.OutMsg;
 import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
 import com.jfinal.weixin.tools.util.DateUtils;
-import com.jfinal.weixin.tools.util.JetisUtil;
 import com.jfinal.weixin.tools.util.StringUtils;
 
 /**
@@ -68,8 +67,6 @@ public abstract class MsgController extends Controller {
 	@Before(MsgInterceptor.class)
 	public void index() {
 		String openId = "";    //当前的openId
-		String sendOpenId="";  //指定  推送的openId 
-		String sendContent="";  //指定  推送的openId  文本
 		// 开发模式输出微信服务发送过来的  xml 消息
 		if (ApiConfigKit.isDevMode()) {
 			log.info("接收消息:");
@@ -92,7 +89,7 @@ public abstract class MsgController extends Controller {
 //			processInTextMsg((InTextMsg)msg,null,null);
 			return;
 		}else if (msg instanceof InTextMsg || msg instanceof InImageMsg || msg instanceof InVoiceMsg 
-				|| msg instanceof InVideoMsg || msg instanceof InLocationMsg ){
+				|| msg instanceof InVideoMsg || msg instanceof InLocationMsg || msg instanceof InShortVideoMsg ){
 			log.info("准备发送提示信息:"+openId);
 			InTextMsg im = new InTextMsg(msg.getToUserName(), msg.getFromUserName(), msg.getCreateTime(), "text");
 			processInTextMsg(im,null,null);
@@ -143,9 +140,9 @@ public abstract class MsgController extends Controller {
 		}finally{
 		}
 		if (!StringUtils.isNull(list)) {
+			/****查看 当前用户的 直播缓存****/
 			for (String directIdR : list) {
 				String[] directInfo = directIdR.split(",");
-				String directKey = directInfo[0];
 				String start = directInfo[1];
 				String end = directInfo[2];
 				Date startTime = DateUtils.formateStr(start);
@@ -164,87 +161,22 @@ public abstract class MsgController extends Controller {
 				} else if (minRightTime <= 0 && eminEndTime >= 0)  { // 说明开始直播了
 					// 检查 发送的详细 规范否
 					boolean sendStatus = true;
-					StringBuffer sb = new StringBuffer();
 					/**
 					 * 发送内容给收听的人
 					 */
 					List<String> listUser = cache.lrange(directIdR, 0,
 							cache.llen(directIdR));
 					for (String sendUserOpenId : listUser) {
-						if (massge instanceof InTextMsg){
-							ApiResult ar= CustomServiceApi.sendText(sendUserOpenId, ((InTextMsg) massge).getContent());
-							Integer in = ar.getErrorCode();
-							if(in==0){
-								log.info("====================发送文本成功=============");
-							}else{
-								log.info("====================发送文本失败=============");
-							}
-						}else if (massge instanceof InImageMsg){
-							ApiResult ar= CustomServiceApi.sendImage(sendUserOpenId, ((InImageMsg) massge).getMediaId());
-							Integer in = ar.getErrorCode();
-							if(in==0){
-								log.info("====================发送图片成功=============");
-							}else{
-								log.info("====================发送图片失败=============");
-							}
-						}else if (massge instanceof InVoiceMsg){
-							CustomServiceApi.sendVoice(sendUserOpenId, ((InVoiceMsg) massge).getMediaId());
-						}else if (massge instanceof InVideoMsg){
-							CustomServiceApi.sendVideo(sendUserOpenId, ((InVideoMsg) massge).getMediaId(), "", "");
-						}else {
-							sendStatus = false;
-							break;
-						}
+						/**
+						 * 发送 数据
+						 */
+						sendMsg(massge,sendUserOpenId,sendStatus);
 					}
+					/**
+					 * 保存数据
+					 */
+					saveServer(im, massge, sendStatus, openId, minRightTime, eminEndTime, cache);
 					
-					if (!sendStatus) { // 监控数据非法
-						log.info("====================数据失败=============");
-						processInTextMsg((InTextMsg) massge, openId,
-								ControllerMessage.DIRECT_MSG_ERROR);
-					} else { // 保存数据
-						// 直播课堂ID
-						sb.append(directIdR + ControllerMessage.CONTENT_SPLIT);
-						// 用户发送信息ID
-						if (massge instanceof InTextMsg) {
-							sb.append(((InTextMsg) massge).getContent()
-									+ ControllerMessage.CONTENT_SPLIT);
-						} else if (massge instanceof InImageMsg) {
-							sb.append(((InImageMsg) massge).getMediaId()
-									+ ControllerMessage.CONTENT_SPLIT);
-						} else if (massge instanceof InVoiceMsg) {
-							sb.append(((InVoiceMsg) massge).getMediaId()
-									+ ControllerMessage.CONTENT_SPLIT);
-						} else if (massge instanceof InVideoMsg) {
-							sb.append(((InVideoMsg) massge).getMediaId()
-									+ ControllerMessage.CONTENT_SPLIT);
-						} else {
-							sb.append(ControllerMessage.DIRECT_MSG_ERROR
-									+ ControllerMessage.CONTENT_SPLIT);
-						}
-						sb.append(massge.getMsgType() + ""
-								+ ControllerMessage.CONTENT_SPLIT);
-						// 发送信息信息时间
-						sb.append(DateUtils.formateDate(new Date())
-								+ ControllerMessage.CONTENT_SPLIT);
-						cache.lpush(openId + ControllerMessage.LESSON_CONTENT,
-								sb.toString());
-						if (minRightTime >= ControllerMessage.DIRECT_MSG_START) {
-							processInTextMsg(im, openId,
-									ControllerMessage.DIRECT_MSG_START_MSG);
-							// 提示 直播已经开始
-						} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_RIGHT_END_MSG) {
-							// 提示 直播 即将结束
-							processInTextMsg(
-									im,
-									openId,
-									eminEndTime
-									+ ""
-									+ ControllerMessage.DIRECT_MSG_RIGHT_END);
-						}else{
-							log.info("====================互动成功!!=============");
-							processInTextMsg((InTextMsg)massge,openId,ControllerMessage.DIRECT_MSG);
-						}
-					}
 				} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime < 0) { // 直播已
 																				// 结束
 					// 假设用户 点击
@@ -254,16 +186,13 @@ public abstract class MsgController extends Controller {
 					break;
 				} else if (eminEndTime < ControllerMessage.DIRECT_MSG_END) { // 如果缓存
 																				// 还没有删除掉,就删除
-					log.info("====================删除缓存!!=============");		// 恢复正常,正常提示
 					cache.lrem(nowOpenId, -2, directIdR);
-					log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播77!!=================距离结束时间"+eminEndTime);
 					if (massge instanceof InTextMsg)
 						im.setContent(((InTextMsg) massge).getContent());
 					processInTextMsg((InTextMsg)massge,null,null);
 				}else{
 					if (massge instanceof InTextMsg)
 						im.setContent(((InTextMsg) massge).getContent());
-					log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播!!=============距离结束时间"+eminEndTime);
 					processInTextMsg(im,null,null);
 				}
 			}
@@ -286,7 +215,6 @@ public abstract class MsgController extends Controller {
 		boolean msg = true;
 		String nowlessonOpenIdKey = ""; // 当前用户 redis open
 		nowlessonOpenIdKey = lessonOpenIds + ControllerMessage.LESSON_ID;
-		log.info("==================听众  获取 缓存list数据:"+"redi 开始获取数据...");
 		String lessonInfo=null;
 		try {
 			lessonInfo = cache.get(nowlessonOpenIdKey);
@@ -294,7 +222,6 @@ public abstract class MsgController extends Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		log.info("==================听众  获取 缓存String数据:"+lessonInfo);
 		if (!StringUtils.isNull(lessonInfo)) { // 说明 该用户已经关注了
 			String[] directInfo = lessonInfo.split(",");
 			String start = directInfo[1];
@@ -306,98 +233,22 @@ public abstract class MsgController extends Controller {
 			int minRightTime = DateUtils.dateminuteDiff(new Date(), startTime);
 			// 计算 距离 结束的时间 如果 大于0 或者等于0 说明 还有多少分钟就结束直播 如果小于0 说明 直播已经结束
 			int eminEndTime = DateUtils.dateminuteDiff(new Date(), endTime);
-			log.info("时间数据提示:距离直播时间" + "======" + minRightTime);
-			log.info("时间数据提示:距离结束直播时间" + "======" + eminEndTime);
 			if (minRightTime <= ControllerMessage.DIRECT_MSG_RIGHT_START
 					&& minRightTime > 0) { // 是否 即将开始直播
 				// 提示 即将开始直播语音
-				log.info("==========================即将开始直播" + "======" + minRightTime);
 				processInTextMsg(im, lessonOpenIds,
 						minRightTime + ""
 								+ ControllerMessage.DIRECT_MSG_RIGHT_START_MSG);
-			} else if (minRightTime <= 0 && eminEndTime >= 0) { // 说明开始直播了
-				// 检查 发送的详细 规范否
-				boolean sendStatus = true;
+			} else if (minRightTime <= 0 && eminEndTime >= 0) { 
 				/**
-				 * 发送消息给主播
+				 * 直播开始 
 				 */
-				if (massge instanceof InTextMsg){
-					ApiResult ar= CustomServiceApi.sendText(directOpenId, ((InTextMsg) massge).getContent());
-					Integer in = ar.getErrorCode();
-					if(in==0){
-						log.info("====================发送文本成功=============");
-					}else{
-						log.info("====================发送文本失败=============");
-					}
-				}else if (massge instanceof InImageMsg){
-					ApiResult ar= CustomServiceApi.sendImage(directOpenId, ((InImageMsg) massge).getMediaId());
-					Integer in = ar.getErrorCode();
-					if(in==0){
-						log.info("====================发送图片成功=============");
-					}else{
-						log.info("====================发送图片失败=============");
-					}
-				}else if (massge instanceof InVoiceMsg){
-					CustomServiceApi.sendVoice(directOpenId, ((InVoiceMsg) massge).getMediaId());
-				}else if (massge instanceof InVideoMsg){
-					CustomServiceApi.sendVideo(directOpenId, ((InVideoMsg) massge).getMediaId(), "", "");
-				}else {
-					sendStatus = false;
-				}
-
-				if (!sendStatus) { // 监控数据非法
-					processInTextMsg(im, lessonOpenIds,
-							ControllerMessage.DIRECT_MSG_ERROR);
-				} else { // 保存数据
-					StringBuffer sb = new StringBuffer();
-					// 直播课堂ID
-					sb.append(lessonOpenIds + ControllerMessage.CONTENT_SPLIT);
-					// 用户发送信息ID
-					if (massge instanceof InTextMsg) {
-						sb.append(((InTextMsg) massge).getContent()
-								+ ControllerMessage.CONTENT_SPLIT);
-					} else if (massge instanceof InImageMsg) {
-						sb.append(((InImageMsg) massge).getMediaId()
-								+ ControllerMessage.CONTENT_SPLIT);
-					} else if (massge instanceof InVoiceMsg) {
-						sb.append(((InVoiceMsg) massge).getMediaId()
-								+ ControllerMessage.CONTENT_SPLIT);
-					} else if (massge instanceof InVideoMsg) {
-						sb.append(((InVideoMsg) massge).getMediaId()
-								+ ControllerMessage.CONTENT_SPLIT);
-					} else {
-						sb.append(ControllerMessage.DIRECT_MSG_ERROR
-								+ ControllerMessage.CONTENT_SPLIT);
-					}
-					sb.append(massge.getMsgType() + ""
-							+ ControllerMessage.CONTENT_SPLIT);
-					// 发送信息信息时间
-					sb.append(DateUtils.formateDate(new Date())
-							+ ControllerMessage.CONTENT_SPLIT);
-					cache.lpush(lessonOpenIds
-							+ ControllerMessage.LESSON_CONTENT, sb.toString());
-				}
-				if (minRightTime >= ControllerMessage.DIRECT_MSG_START && eminEndTime < 0 ) {
-					log.info("==========================提示 已经开始直播" + "======" + minRightTime);
-					processInTextMsg(im, lessonOpenIds,
-							ControllerMessage.DIRECT_MSG_START_MSG);
-					// 提示 直播已经开始
-				} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_RIGHT_END_MSG) {
-					log.info("==========================提示 直播即将结束" + "======" + eminEndTime);
-					// 提示 直播 即将结束
-					processInTextMsg(im, lessonOpenIds,
-							eminEndTime + ""
-									+ ControllerMessage.DIRECT_MSG_RIGHT_END);
-				}else{
-					log.info("====================互动成功!!=============");
-					processInTextMsg((InTextMsg)massge,lessonOpenIds,ControllerMessage.DIRECT_MSG);
-				}
-			} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime <=0) { // 直播已
-				log.info("====================直播结束!!=============");												// 结束
+				startDirect(massge,directOpenId,im,lessonOpenIds,minRightTime,eminEndTime,cache);
+				
+			} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime <=0) { // 直播 已经结束
 				// 假设用户 点击
 				processInTextMsg(im, lessonOpenIds,
 						ControllerMessage.DIRECT_MSG_END_MSG);
-				log.info("====================删除缓存22222!!=============");	
 				cache.lrem(nowlessonOpenIdKey, -2, lessonInfo);
 			} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_END) { // 如果缓存// 恢复正常,正常提示
 				cache.lrem(nowlessonOpenIdKey, -2, lessonInfo);
@@ -407,7 +258,6 @@ public abstract class MsgController extends Controller {
 			}else{
 				if (massge instanceof InTextMsg)
 					im.setContent(((InTextMsg) massge).getContent());
-				log.info("距离开始时间"+eminEndTime+"======================已过期或者 没到直播!!=============距离结束时间"+eminEndTime);
 				processInTextMsg(im,null,null);
 			}
 			msg = true;
@@ -415,6 +265,158 @@ public abstract class MsgController extends Controller {
 			msg = false;
 		}
 		return msg;
+	}
+	
+	
+	/**
+	 * 听众 说明直播 开始
+	 * @param massge  			接收到的信息
+	 * @param directOpenId		需要发送的用户 openId
+	 * @param im				初始化 通知消息
+	 * @param lessonOpenIds		当前用户的OpenId
+	 * @param minRightTime		开播距离时间
+	 * @param eminEndTime		结束距离时间
+	 * @param cache				缓存
+	 */
+	public void startDirect(InMsg massge,String directOpenId,InTextMsg im,
+			String lessonOpenIds,int minRightTime,int eminEndTime,Jedis cache ){
+		// 检查 发送的详细 规范否
+		boolean sendStatus = true;
+		/**
+		 * 发送消息
+		 */
+		sendMsg(massge,directOpenId,sendStatus);
+		/**
+		 * 保存数据
+		 */
+		saveServer(im, massge, sendStatus, lessonOpenIds, minRightTime, eminEndTime, cache);
+	}
+	
+	/**
+	 * 发送消息 服务
+	 * @param massge
+	 * @param openId
+	 * @param sendStatus
+	 */
+	public void sendMsg(InMsg massge,String openId,boolean sendStatus){
+		if (massge instanceof InTextMsg){
+			ApiResult ar= CustomServiceApi.sendText(openId, ((InTextMsg) massge).getContent());
+			Integer in = ar.getErrorCode();
+			if(in==0){
+				log.info("====================发送文本成功=============");
+			}else{
+				log.info("====================发送文本失败=============");
+			}
+		}else if (massge instanceof InImageMsg){
+			ApiResult ar= CustomServiceApi.sendImage(openId, ((InImageMsg) massge).getMediaId());
+			Integer in = ar.getErrorCode();
+			if(in==0){
+				log.info("====================发送图片成功=============");
+			}else{
+				log.info("====================发送图片失败=============");
+			}
+		}else if (massge instanceof InVoiceMsg){
+			ApiResult ar= CustomServiceApi.sendVoice(openId, ((InVoiceMsg) massge).getMediaId());
+			Integer in = ar.getErrorCode();
+			if(in==0){
+				log.info("====================发送音频成功=============");
+			}else{
+				log.info("====================发送音频失败=============");
+			}
+		}else if (massge instanceof InVideoMsg){
+			ApiResult ar= CustomServiceApi.sendVideo(openId, ((InVideoMsg) massge).getMediaId(),((InVideoMsg) massge).getThumbMediaId(), "", "");
+			Integer in = ar.getErrorCode();
+			if(in==0){
+				log.info("====================发送视频成功=============");
+			}else{
+				log.info("====================发送视频图片失败=============");
+			}
+		}else if (massge instanceof InShortVideoMsg){
+			ApiResult ar= CustomServiceApi.sendVideo(openId, ((InShortVideoMsg) massge).getMediaId(),((InShortVideoMsg) massge).getThumbMediaId(), "", "");
+			Integer in = ar.getErrorCode();
+			if(in==0){
+				log.info("====================发送短视频成功=============");
+			}else{
+				log.info("====================发送短视频失败=============");
+			}
+		}else if(massge instanceof InSpeechRecognitionResults){
+			ApiResult ar= CustomServiceApi.sendVoice(openId, ((InVoiceMsg) massge).getMediaId());
+			Integer in = ar.getErrorCode();
+			if(in==0){
+				log.info("====================发送音频识别=============");
+			}else{
+				log.info("====================发送音频识别=============");
+			}
+		}else {
+			sendStatus = false;
+		}
+	}
+	
+	
+	/**
+	 * 缓存数据
+	 * @param im				初始化通知服务
+	 * @param massge			接收到的消息
+	 * @param sendStatus		是否有数据异常
+	 * @param lessonOpenIds		保存当前的用户
+	 * @param minRightTime		开播距离时间
+	 * @param eminEndTime		结束距离时间
+	 * @param cache				缓存
+	 */
+	public void saveServer(InTextMsg im,InMsg massge,boolean sendStatus,String lessonOpenIds,int minRightTime,int eminEndTime,Jedis cache){
+		if (!sendStatus) { // 监控数据非法
+			processInTextMsg(im, lessonOpenIds,
+					ControllerMessage.DIRECT_MSG_ERROR);
+		} else {
+			/**
+			 * 保存数据
+			 */
+			StringBuffer sb = new StringBuffer();
+			// 直播课堂ID
+			sb.append(lessonOpenIds + ControllerMessage.CONTENT_SPLIT);
+			// 用户发送信息ID
+			if (massge instanceof InTextMsg) {
+				sb.append(((InTextMsg) massge).getContent()
+						+ ControllerMessage.CONTENT_SPLIT);
+			} else if (massge instanceof InImageMsg) {
+				sb.append(((InImageMsg) massge).getMediaId()
+						+ ControllerMessage.CONTENT_SPLIT);
+			} else if (massge instanceof InVoiceMsg) {
+				sb.append(((InVoiceMsg) massge).getMediaId()
+						+ ControllerMessage.CONTENT_SPLIT);
+			} else if (massge instanceof InVideoMsg) {
+				sb.append(((InVideoMsg) massge).getMediaId()
+						+ ControllerMessage.CONTENT_SPLIT);
+			} else if(massge instanceof InShortVideoMsg){
+				sb.append(((InShortVideoMsg) massge).getMediaId()
+						+ ControllerMessage.CONTENT_SPLIT);
+			}else if(massge instanceof InSpeechRecognitionResults){
+				sb.append(((InSpeechRecognitionResults) massge).getMediaId()+",音频处理效果"
+						+ ControllerMessage.CONTENT_SPLIT);
+			}else{
+				sb.append(ControllerMessage.DIRECT_MSG_ERROR
+						+ ControllerMessage.CONTENT_SPLIT);
+			}
+			sb.append(massge.getMsgType() + ""
+					+ ControllerMessage.CONTENT_SPLIT);
+			// 发送信息信息时间
+			sb.append(DateUtils.formateDate(new Date())
+					+ ControllerMessage.CONTENT_SPLIT);
+			cache.lpush(lessonOpenIds
+					+ ControllerMessage.LESSON_CONTENT, sb.toString());
+		}
+		if (minRightTime >= ControllerMessage.DIRECT_MSG_START && eminEndTime < 0 ) {
+			processInTextMsg(im, lessonOpenIds,
+					ControllerMessage.DIRECT_MSG_START_MSG);
+			// 提示 直播已经开始
+		} else if (eminEndTime <= ControllerMessage.DIRECT_MSG_RIGHT_END_MSG) {
+			// 提示 直播 即将结束
+			processInTextMsg(im, lessonOpenIds,
+					eminEndTime + ""
+							+ ControllerMessage.DIRECT_MSG_RIGHT_END);
+		}else{
+			processInTextMsg(im,lessonOpenIds,ControllerMessage.DIRECT_MSG);
+		}
 	}
 	
 	

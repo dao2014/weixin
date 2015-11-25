@@ -21,7 +21,7 @@ public interface UserServer {
 	 * @return
 	 * @throws Exception
 	 */
-	public int findOpenId(String OpenId) throws Exception;
+	public String findOpenId(String OpenId) throws Exception;
 	
 	/**
 	 * 更新用户信息

@@ -13,6 +13,7 @@ import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.UserApi;
 import com.jfinal.weixin.sdk.msg.in.event.InFollowEvent;
 import com.jfinal.weixin.server.UserServer;
+import com.jfinal.weixin.tools.util.StringUtils;
 
 public class UserServerImpl extends BaseServerImpl implements UserServer {
 
@@ -24,9 +25,9 @@ public class UserServerImpl extends BaseServerImpl implements UserServer {
 		// TODO Auto-generated method stub
 		String openId = inFollowEvent.getFromUserName();
 		log.info("关注用户ID"+openId+"================================");
-		int status = findOpenId(openId);
+		String status = findOpenId(openId);
 		Map<String, Object> attrs = new HashMap<String,Object>();
-		if(status!=0){  //说明用户已经 关注过
+		if(!StringUtils.isNull(status)){  //说明用户已经 关注过
 			attrs.put("id", status);
 			if(inFollowEvent.getEvent().equals("subscribe")){//表示订阅
 				attrs.put("user_status", 1);   //用户已经关注
@@ -52,6 +53,7 @@ public class UserServerImpl extends BaseServerImpl implements UserServer {
 				attrs.put("wachat_province", apiResult.get("province"));
 				attrs.put("create_time", new Date());
 				attrs.put("user_status", 1);
+				attrs.put("id", StringUtils.getUUID());
 				if(saveUser(attrs)){
 					log.info("新增用户关注成功--");
 				}else{
@@ -62,12 +64,12 @@ public class UserServerImpl extends BaseServerImpl implements UserServer {
 	}
 
 	@Override
-	public int findOpenId(String OpenId) throws Exception {
+	public String findOpenId(String OpenId) throws Exception {
 		// TODO Auto-generated method stub
 		Record user = Db.findFirst("SELECT * FROM user WHERE wacht_open_id=?", OpenId);
 		if(user!=null)
-			return user.getInt("id");
-		return 0;
+			return user.getStr("id");
+		return "";
 	}
 
 	@Override
