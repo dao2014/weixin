@@ -53,7 +53,7 @@ import com.jfinal.weixin.tools.util.StringUtils;
 
 /**
  * 接收微信服务器消息，自动解析成 InMsg 并分发到相应的处理方法
- */
+ */ 
 public abstract class MsgController extends Controller {
 	
 	public static final Logger log =  Logger.getLogger(MsgController.class);
@@ -67,7 +67,6 @@ public abstract class MsgController extends Controller {
 	 */
 	@Before(MsgInterceptor.class)
 	public void index() {
-		log.info("========================已经进来了");
 		String openId = "";    //当前的openId
 		String sendOpenId="";  //指定  推送的openId 
 		String sendContent="";  //指定  推送的openId  文本
@@ -85,19 +84,18 @@ public abstract class MsgController extends Controller {
 		Jedis jedis = newsCache.getJedis();
 		if(searchDirect(msg,openId,jedis)){
 			newsCache.close(jedis);
-			log.info("==============================服务发送成功:");
 //			processInTextMsg((InTextMsg)msg,null,null);
 			//提示 互动成功!
 			return;
 		}else if(searchLesson(msg,openId,jedis)){
 			newsCache.close(jedis);
-			log.info("==============================接收人发送成功:");
 //			processInTextMsg((InTextMsg)msg,null,null);
 			return;
 		}else if (msg instanceof InTextMsg || msg instanceof InImageMsg || msg instanceof InVoiceMsg 
 				|| msg instanceof InVideoMsg || msg instanceof InLocationMsg ){
 			log.info("准备发送提示信息:"+openId);
-			processInTextMsg((InTextMsg)msg,null,null);
+			InTextMsg im = new InTextMsg(msg.getToUserName(), msg.getFromUserName(), msg.getCreateTime(), "text");
+			processInTextMsg(im,null,null);
 		}else if (msg instanceof InShortVideoMsg)   //支持小视频
 			processInShortVideoMsg((InShortVideoMsg) msg);
 		else if (msg instanceof InLinkMsg)
@@ -134,23 +132,18 @@ public abstract class MsgController extends Controller {
 		boolean msg = true;
 		String nowOpenId = "";// 当前用户redis OpenId
 		nowOpenId = openId + ControllerMessage.OPEN_ID_SEELING;
-		log.info("================主播 获取 缓存list数据:"+"redi 开始获取数据...");
 		List<String> list = null;
 		try {
 			if(cache!=null){
-				log.info("==============查看redis是否为空 获取数据==============..."+cache);
 				list = cache.lrange(nowOpenId, 0, cache.llen(nowOpenId));
-				log.info("=========================..."+cache);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 		}
-		log.info("==========收到缓存list数据:" + list.size() + "======" + list);
 		if (!StringUtils.isNull(list)) {
 			for (String directIdR : list) {
-				log.info("主播 收到缓存的数据:" + "======" + directIdR);
 				String[] directInfo = directIdR.split(",");
 				String directKey = directInfo[0];
 				String start = directInfo[1];
@@ -162,17 +155,13 @@ public abstract class MsgController extends Controller {
 						startTime);
 				// 计算 距离 结束的时间 如果 大于0 或者等于0 说明 还有多少分钟就结束直播 如果小于0 说明 直播已经结束
 				int eminEndTime = DateUtils.dateminuteDiff(new Date(), endTime);
-				log.info("时间数据提示:距离直播时间" + "======" + minRightTime);
-				log.info("时间数据提示:距离结束直播时间" + "======" + eminEndTime);
 				if (minRightTime <= ControllerMessage.DIRECT_MSG_RIGHT_START
 						&& minRightTime > 0) { // 是否 即将开始直播
-					log.info("==========================即将开始直播" + "======" + minRightTime);
 					// 提示 即将开始直播语音
 					processInTextMsg(im, openId, minRightTime
 							+ "" + ControllerMessage.DIRECT_MSG_RIGHT_START_MSG);
 					break;
 				} else if (minRightTime <= 0 && eminEndTime >= 0)  { // 说明开始直播了
-					log.info("==========================开始直播" + "======" + eminEndTime);
 					// 检查 发送的详细 规范否
 					boolean sendStatus = true;
 					StringBuffer sb = new StringBuffer();
@@ -181,7 +170,6 @@ public abstract class MsgController extends Controller {
 					 */
 					List<String> listUser = cache.lrange(directIdR, 0,
 							cache.llen(directIdR));
-					log.info("==========================开始直播" + "获取用户需要发送的用户======" + listUser);
 					for (String sendUserOpenId : listUser) {
 						if (massge instanceof InTextMsg){
 							ApiResult ar= CustomServiceApi.sendText(sendUserOpenId, ((InTextMsg) massge).getContent());

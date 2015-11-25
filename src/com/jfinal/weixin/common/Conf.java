@@ -87,8 +87,8 @@ public class Conf extends JFinalConfig{
 		 *集群redis 
 		 */
 		// 用于缓存bbs模块的redis服务
-//		RedisPlugin seedingRedis = new RedisPlugin("direct", "115.29.113.54",6379,25200);  //七天失效
-		RedisPlugin seedingRedis = new RedisPlugin("direct", "10.163.197.17",6379,25200);  //七天失效
+		RedisPlugin seedingRedis = new RedisPlugin(PropKit.get("redisname"), PropKit.get("redislocalhost"),PropKit.getInt("redispoit"),PropKit.getInt("redistimeout"));  //七天失效
+//		RedisPlugin seedingRedis = new RedisPlugin("direct", "10.163.197.17",6379,25200);  //七天失效
 		JedisPoolConfig jpl = seedingRedis.getJedisPoolConfig();
 		//连接超时
 		jpl.setMaxWaitMillis(1000*3);

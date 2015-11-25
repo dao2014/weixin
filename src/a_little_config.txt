@@ -20,4 +20,11 @@ appSecret=f3ef04b888036796cefc52f1249a6f87
 #encryptMessage=true
 #encodingAesKey=yourEncodingAesKey
 
+####reids
+redisname=direct
+redislocalhost=115.29.113.54
+#redislocalhost=10.163.197.17
+redispoit=6379
+redistimeout=25200
+
 

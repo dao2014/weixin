@@ -50,43 +50,63 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 		String directId = attrs.get("direct_id")+"";
 		String openId = attrs.get("wecht_open_id")+"";
 		String password = attrs.get("direct_password")+"";
-		Integer anserId=0;
+		String anserId=null;
+		Integer dbAnswerStatus=null;
 		Integer status =Integer.parseInt(attrs.get("answer_status")+"");
 		UserDirect ud = ds.findId(directId);
+		Map<String, Object> dsattrs = new HashMap<String,Object>();
+		dsattrs.put("id", directId);
+		dsattrs.put("direct_update_time", new Date());
+		Integer count = ud.getInt("direct_number");
 		//听课密码不正确!
 		if(status==1 && !password.equals(ud.get("direct_password"))){
 			return false;
 		}
 		attrs.remove("direct_password");
-		DirectAnswer directAnswers = DirectAnswer.directAnswerDao.findFirst("select id from direct_answer where wecht_open_id=? and direct_id=?", openId,directId);
+		DirectAnswer directAnswers = DirectAnswer.directAnswerDao.findFirst("select id,answer_status from direct_answer where wecht_open_id=? and direct_id=?", openId,directId);
 		if(StringUtils.isNull(directAnswers)){//新增
-			return save(attrs,ud);
+			attrs.put("id", StringUtils.getUUID());
+			if(save(attrs,ud)){
+				dsattrs.put("direct_number", ++count);
+				updateCount(dsattrs,ud);
+				return true;
+			}else{
+				return false;
+			}
 		}
 		attrs.remove("answer_create_time");
-		anserId = directAnswers.getInt("id");
+		anserId = directAnswers.getStr("id");
+		dbAnswerStatus = directAnswers.getInt("answer_status");
 		attrs.put("id", anserId);
+		attrs.put("answer_update_time", new Date());
 		if(DirectAnswer.directAnswerDao.setAttrs(attrs).update()){
-			Integer count = ud.getInt("direct_number");
-			Map<String, Object> dsattrs = new HashMap<String,Object>();
-			dsattrs.put("id", directId);
-			dsattrs.put("direct_number", ++count);
-			dsattrs.put("direct_update_time", new Date());
-			ds.update(dsattrs);
-			log.info(ControllerMessage.RESPONG_DATE_SUCCESS);
 			//状态  1 是接听 0 取消
 			if(status==null)
 				return true;
-			if(status==1){  //是否接听
+			if(status==1 && dbAnswerStatus != status){  //是否接听
+				dsattrs.put("direct_number", ++count);
 				//创建缓存
 				addDirectUser(openId,directId,ud);
-			}else{
+			}else if(status==0 && dbAnswerStatus != status){
 				//删除
+				dsattrs.put("direct_number", --count);
 				delDirectUser(openId,directId,ud);
 			}
+			updateCount(dsattrs,ud);
+			log.info(ControllerMessage.RESPONG_DATE_SUCCESS);
 			return true;
 		}
 		log.info(ControllerMessage.RESPONG_DATE_ERROR);
 		return false;
+	}
+	
+	
+	/**
+	 * 更新收听人数s
+	 * @param attrs
+	 */
+	public void updateCount(Map<String, Object> attrs,UserDirect ud ){
+		ds.update(attrs);
 	}
 	
 	/**
@@ -96,15 +116,17 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 	 */
 	public boolean addDirectUser(String openId,String directId,UserDirect ud){
 		String jsOpenId = ud.getStr("wecht_open_id");
-		Jedis cache= JetisUtil.getJedis();
+		Cache cache = Redis.use();
+		Jedis jedis = cache.getJedis();
 		Date start = ud.getDate("direct_start_time");
 		Date end = ud.getDate("direct_end_time");
 		String directIdkey = directId+","+DateUtils.formateDate(start)+","+DateUtils.formateDate(end);
-		cache.lpush(directIdkey,openId);  //添加 课程 的听课人员
+		jedis.lpush(directIdkey,openId);  //添加 课程 的听课人员
 		int sent = DateUtils.dateSecondDiff(new Date(),end );
 		log.info("用户收听失效时间:" + sent);
 		//所有听众信息
-		cache.setex(openId+ControllerMessage.LESSON_ID, DateUtils.dateSecondDiff(new Date(),end ), directIdkey+","+jsOpenId);
+		jedis.setex(openId+ControllerMessage.LESSON_ID, DateUtils.dateSecondDiff(new Date(),end ), directIdkey+","+jsOpenId);
+		cache.close(jedis);
 		return true;
 	}
 	
@@ -114,18 +136,20 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 	 * @return
 	 */
 	public boolean delDirectUser(String openId,String directId,UserDirect ud){
-		Jedis cache= JetisUtil.getJedis();
+		Cache cache = Redis.use();
+		Jedis jedis = cache.getJedis();
 		String keys = "";
 		Date start = ud.getDate("direct_start_time");
 		Date end = ud.getDate("direct_end_time");
 		//课程reidsId
 		keys = directId+","+DateUtils.formateDate(start)+","+DateUtils.formateDate(end);
-		Long len = cache.llen(keys);
+		Long len = jedis.llen(keys);
 		if(len==null && len<=0L ){
-			cache.del(keys);
+			jedis.del(keys);
 		}
-		cache.lrem(keys,-2,openId);
-		cache.del(openId+ControllerMessage.LESSON_ID);
+		jedis.lrem(keys,-2,openId);
+		jedis.del(openId+ControllerMessage.LESSON_ID);
+		cache.close(jedis);
 		return true;
 	}
 

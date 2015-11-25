@@ -81,11 +81,13 @@ public class DirectServerImpl<M>  implements DirectServer<M> {
 		String openId = ud.get("wecht_open_id");
 		Date start = ud.getDate("direct_start_time");
 		Date end = ud.getDate("direct_end_time");
-		Jedis cache= JetisUtil.getJedis();
-		cache.lpush(openId+ControllerMessage.OPEN_ID_SEELING, directId+","+DateUtils.formateDate(start)+","+DateUtils.formateDate(end));
+		Cache cache = Redis.use();
+		Jedis jedis = cache.getJedis();
+		jedis.lpush(openId+ControllerMessage.OPEN_ID_SEELING, directId+","+DateUtils.formateDate(start)+","+DateUtils.formateDate(end));
 		int scon = DateUtils.dateSecondDiff(new Date(),end );
 		log.info("失效时间"+scon);
-		cache.expire(ud.get("wecht_open_id")+ControllerMessage.OPEN_ID_SEELING, scon);
+		jedis.expire(ud.get("wecht_open_id")+ControllerMessage.OPEN_ID_SEELING, scon);
+		cache.close(jedis);
 		return true;
 	}
 	
@@ -98,6 +100,7 @@ public class DirectServerImpl<M>  implements DirectServer<M> {
 
 	@Override
 	public boolean save(Map<String, Object> attrs) {
+		attrs.put("id", StringUtils.getUUID());
 		if(Db.save("user_direct", new Record().setColumns(attrs))){
 			log.info(ControllerMessage.RESPONG_DATE_SUCCESS);
 			return true;
