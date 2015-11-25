@@ -1,0 +1,25 @@
+.main-404 {
+  height: 100%;
+  background-image: url(../img/404-bg.jpg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat; }
+  .main-404 img {
+    width: 202px;
+    padding-top: 120px;
+    margin: 0 auto; }
+  .main-404 .text {
+    color: #E5A879;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 15px; }
+  .main-404 .btn {
+    display: block;
+    width: 100px;
+    margin: 10px auto 0;
+    padding: 5px 6px;
+    color: #FFF6D6;
+    background-color: #FA8F31;
+    border-radius: 4px;
+    -webkit-border-radius: 4px; }
+
+/*# sourceMappingURL=404.css.map */

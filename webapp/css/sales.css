@@ -1,0 +1,14 @@
+.sales-main .title {
+  color: #000;
+  font-size: 24px;
+  padding: 5px 10px; }
+.sales-main .times {
+  font-size: 12px;
+  padding: 0 10px;
+  color: #ababab;
+  margin-bottom: 5px; }
+.sales-main .product-content {
+  padding: 0 10px;
+  background-color: #f8f8f8; }
+
+/*# sourceMappingURL=sales.css.map */

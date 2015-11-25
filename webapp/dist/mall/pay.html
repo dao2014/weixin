@@ -1,0 +1,82 @@
+
+<div class="base-header">
+	<div>
+		<i class='icon-back'  return-history></i>
+		<h1>结算付款</h1>
+	</div>
+</div>
+<div class="pay-main wrapper-main">
+	<div class="shop-address">
+		<div class="info clearfix">
+			<span class="name">
+				收货人：{{AddressInfo.contact}}
+			</span>
+			<span class="phone">
+				{{AddressInfo.phone}}
+			</span>
+		</div>
+		<div class='address' ng-if="AddressInfo">{{AddressInfo.province+AddressInfo.city+AddressInfo.district+AddressInfo.detail}}</div>
+	</div>
+	<!-- 支付方式 -->
+	<div class='pay-panel'>
+		<div class="title">
+			<p>选择支付方式</p>
+		</div>
+		<div ng-repeat="item in paylist"  class="pay-item clearfix">
+			<img class="left" ng-src="{{item.image}}">
+			<div class="pay-info" ng-click='onChoosePay($index)' ng-class="{active:item.id==DefaultPay}">
+				<p>{{item.text}}</p>
+				<button class='icon-choose'></button>
+			</div>
+		</div>
+	</div>
+	<!-- 快递选择 -->
+	<div class="shop-remark">
+		<div class="form-group">
+			<div class="form-items">
+				<label class="form-label">快递方式：</label>
+				<div class="form-input select">
+					<select class="form-control expresses" ng-model="expresses.items"
+	        			ng-options="ex.name for ex in expresses"
+	        			ng-change="changeExpress()">
+	        			<option value="">-- 请选择快递 --</option>
+				    </select>
+				</div>
+				<!-- <i class="icon-new-add"></i> -->
+			</div>
+			<div class="form-items">
+				<label class="form-label">快递运费：</label>
+				<div class="form-input align-right">
+					<span class='price'>&yen;<span>{{Remark.freight | number:2}}</span></span>
+				</div>
+			</div>
+			<div class="form-items">
+				<label class="form-label">收货备注：</label>
+				<p>
+					<textarea placeholder="请输入200字以内"  ng-model='Remark.remark'>{{Remark.remark}}</textarea>
+				</p>
+			</div>
+
+		</div>
+	</div>
+	<div class='pay-panel'>
+		<div class="title">
+			<p>订单详情</p>
+		</div>
+		<div class="income-list" ng-if="shoplist.length>0">
+			<div class="income-list-items" ng-repeat="items in shoplist" ng-if="items.number>0">
+				<span class="income-items-name">{{items.name}}</span>
+				<span class="right income-items-price">&yen;{{items.retailPrice}}</span>
+				<span class="right income-items-number">&times;{{items.number}}</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="shop-bottom">
+	<div class="clearfix">
+		<div class="sum-price left">应付金额：<span class='price'>&yen;<span>{{sumPrice | number:2}}</span></span></div>
+		<div class="choose-good right" ng-click="goOrderPay()">
+			确认付款
+		</div>
+	</div>
+</div>

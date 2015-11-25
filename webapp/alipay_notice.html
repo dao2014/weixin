@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app='OrangeApp'>
+<head>
+  <title>订单支付</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="max-age=0" />
+  <meta name="apple-touch-fullscreen" content="yes" />
+  <meta name="Description" content="橙商" />
+  <meta name="Keywords" content="橙商" />
+  <meta name="renderer" content="webkit">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- <link rel="stylesheet" type="text/css" href="css/index.css" /> -->
+  <link rel="stylesheet" type="text/css" href="../app/build/OrangeMallApp.min.css" />
+  <style type="text/css">
+  	.title p{
+  		font-size:15px;
+  	}
+  	.red{
+  		color: red!important;
+  	}
+	.pay-panel .income-list-items{
+		padding:3px 15px;
+	}
+	.income-list-items span{
+		font-size: 14px;
+	}
+	.income-list-items .right{
+		width:50px;
+		text-align: right;
+	}
+	.order-time .order-time-info{
+		height: auto;
+	}
+	.order-time p>label{
+		width: 70px;
+		margin-right: 0
+	}
+  </style>
+</head>
+<body>
+<div class="base-header">
+	<div>
+		<h1>订单支付成功</h1>
+	</div>
+</div>
+<div class="orderinfo-main wrapper-main">
+	<div class="shop-address">
+		<div class="info clearfix" ng-if="AddressInfo">
+			<span class="name">
+				收货人：<{$one_order_detail.address.name}>
+			</span>
+			<span class="phone">
+				<{$one_order_detail.address.phone}>
+			</span>
+		</div>
+		<div class='address' ng-if="AddressInfo"><{$one_order_detail.address.province}><{$one_order_detail.address.city}><{$one_order_detail.address.district}><{$one_order_detail.address.detail}></div>
+	</div>
+	<div class='pay-panel'>
+		<div class="title">
+			<p>商品清单</p>
+		</div>
+		<{foreach from=$one_order_detail.products item=one_product}>
+		<div class="income-list-items">
+			<span class="income-items-name"><{$one_product.name}></span>
+			<span class="right income-items-price">¥<{$one_product.price}></span>
+			<span class="right income-items-number">×<{$one_product.productAmount}></span>
+		</div>
+		<{/foreach}>
+	</div>
+	<div class="order-time">
+		<div class="order-time-info">
+			<p>
+				<label>订单状态：</label>
+				<span class='red'><{$one_order_detail.status}></span>
+			</p>
+			<p>
+				<label>下单时间：</label>
+				<span><{$one_order_detail.createTime}></span>
+			</p>
+			<p>
+				<label>订单单号：</label>
+				<span><{$one_order_detail.code}></span>
+			</p>
+			<p>
+				<label>运费：</label>
+				<span><{$one_order_detail.freight}>元</span>
+			</p>
+			<p>
+				<label>订单总计：</label>
+				<span style='color: #ED6D00; font-weight: bold;'><{$one_order_detail.totalMoney}>元</span>
+			</p>
+			<p>
+				<label>支付方式：</label>
+				<span style='color: #00B100; font-weight: bold;'>支付宝支付</span>
+			</p>
+		</div>
+		<div class="order-time-mark">
+			<p>
+				<label>收货备注：</label>
+				<span><{$one_order_detail.buyerRemark}></span>
+			</p>
+		</div>
+	</div>
+</div>
+</body>
+</html>

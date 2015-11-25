@@ -1,0 +1,86 @@
+
+
+
+$baseBg 		: #FAFAFA;
+$colorFAFAFA 	: #FAFAFA;
+$baseColor 		: #DA2C62;
+// $baseColor      : rgb(218,68,100);
+$colorFFF		: #FFFFFF;
+$color666		: #666666;
+$color333		: #333333;
+$colorF2F2F2	: #F2F2F2;
+$fontSize 		: 12px;
+$fontsize 		: 12px;
+$basef4d6cd		: #f4d6cd;
+$bgF8F8F8		: #F8F8F8;
+// $bgE6E6E6		: #E6E6E6;
+$colorE6E6E6	: #E6E6E6;
+$colorE5E5E5	: #E5E5E5;
+$zIndex			: 100;
+$base373737		: #373737;
+
+/**
+* 可用于继承 @extend .box-sizing
+*/
+.box-sizing{
+	-webkit-box-sizing:border-box;
+	   -moz-box-sizing:border-box;
+			box-sizing:border-box;
+}
+/**
+* sass中可用mixin定义一些代码片段，且可传参数，方便日后根据需求调用
+* @include box-sizing(border-box);
+*/
+@mixin box-sizing ($sizing) {
+    -webkit-box-sizing:$sizing;     
+       -moz-box-sizing:$sizing;
+            box-sizing:$sizing;
+}
+
+@mixin border-radius($px){
+	-webkit-border-radius:$px;
+	   -moz-border-radius:$px;
+		    border-radius:$px;
+}
+@mixin position($position:fixed,$zIndex:100,$width:100%,$type:top,$left:0,$top:0,$right:0,$bottom:0){
+	position: $position;
+	@if $type == top{
+		top:$top;
+	} @else if $type == bottom {
+		bottom:$bottom;
+	}
+	left: $left;
+	right:$right;
+	width:$width;
+	z-index: $zIndex;
+}
+
+@mixin background-icon($img,$size:auto,$repeat:no-repeat,$color:none,$pos:50%){
+	background-color:$color;
+	background-image: $img;
+	background-repeat: $repeat;
+	background-size: $size;
+	background-position:$pos;
+}
+
+/**
+* sass中可用mixin定义一些代码片段，且可传参数，方便日后根据需求调用
+* @include box-sizing(border-box);
+*/
+@mixin user-select ($none) {
+    -webkit-user-select: $none;
+	   -moz-user-select: $none;
+	    -ms-user-select: $none;
+			user-select: $none;
+	-webkit-text-size-adjust: $none;
+	   -moz-text-size-adjust: $none;
+	 	-ms-text-size-adjust: $none;
+		 -o-text-size-adjust: $none;
+		    text-size-adjust: $none;
+	-webkit-touch-callout: $none;
+	    -ms-touch-action: $none;
+}
+
+
+
+

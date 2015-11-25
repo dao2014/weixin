@@ -1,0 +1,27 @@
+
+
+
+
+
+<!-- 我的名片 -->
+
+<div class="base-header bg">
+	<div>
+		<i class='icon-back' return-history></i>
+		<h1>我的二维码名片</h1>
+	</div>
+</div>
+<div class="qrcode-main wrapper-main pb0" qrcode-main-bg ng-if="IsAuthed">
+		<!-- <div class="head"> -->
+			<img ng-src="{{wechat.qrcode}}" alt="">
+		<!-- </div> --> 
+		<!-- <div class="name">
+			{{wechat.nickName}}
+		</div> -->
+		<p id="create-qrcode" style="margin:10px 0;text-align:center; font-size:16px;color:#373737;">
+			正在生成二维码名片，请耐心等待。
+		</p>
+</div>
+<div class="income-main wrapper-main" ng-if="!IsAuthed">
+	<p style="margin:10px 0;text-align:center; font-size:14px;color:#373737;">{{authText}}</p>
+</div>

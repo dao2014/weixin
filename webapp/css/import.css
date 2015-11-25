@@ -1,0 +1,19 @@
+@charset "UTF-8";
+/**
+* 可用于继承 @extend .box-sizing
+*/
+.box-sizing {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+/**
+* sass中可用mixin定义一些代码片段，且可传参数，方便日后根据需求调用
+* @include box-sizing(border-box);
+*/
+/**
+* sass中可用mixin定义一些代码片段，且可传参数，方便日后根据需求调用
+* @include box-sizing(border-box);
+*/
+
+/*# sourceMappingURL=import.css.map */

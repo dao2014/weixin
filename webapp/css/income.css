@@ -1,0 +1,277 @@
+.income-main {
+  background: #f8f8f8; }
+
+.income-type {
+  display: -moz-box;
+  display: -webkit-box;
+  display: box;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid #EAEAEA;
+  padding: 0 15px; }
+  .income-type > div {
+    box-flex: 1;
+    -webkit-box-flex: 1;
+    -moz-webkit-box: 1;
+    /*text-align: center;*/
+    line-height: 18px;
+    height: 18px;
+    padding: 10px 0 0 0; }
+    .income-type > div a {
+      color: #373737;
+      font-size: 13px;
+      display: block;
+      line-height: 18px; }
+    .income-type > div:last-child {
+      text-align: right; }
+    .income-type > div span {
+      color: #ED6D00; }
+
+.income-title {
+  margin-top: 10px;
+  line-height: 50px;
+  height: 50px;
+  border-width: 1px 0;
+  border-color: #eaeaea;
+  border-style: solid;
+  background-color: #fff; }
+  .income-title .left, .income-title .right {
+    font-size: 15px;
+    color: #373737; }
+  .income-title .left {
+    margin-left: 15px; }
+  .income-title .right {
+    margin-right: 15px; }
+  .income-title .price {
+    color: #12ce85; }
+
+/**/
+.income-group {
+  border-width: 1px 0;
+  border-color: #eaeaea;
+  border-style: solid;
+  background-color: #fff;
+  margin-top: 10px; }
+
+.income-group.cash .income-group-header {
+  border-bottom: 1px dotted #DBDBDB; }
+
+.income-group.cash .income-group-header:last-child {
+  border-bottom: none; }
+
+.income-group.cash .income-group-header.cash p {
+  line-height: 22px;
+  padding-top: 0px; }
+
+.income-group-header {
+  padding: 10px 15px; }
+  .income-group-header .price {
+    font-size: 14px; }
+  .income-group-header .price.green {
+    color: #12ce85; }
+  .income-group-header .price.red {
+    color: #f85145; }
+  .income-group-header .aname {
+    color: #ED6D00; }
+  .income-group-header .left {
+    font-size: 15px;
+    line-height: 15px;
+    color: #000; }
+  .income-group-header .time {
+    font-size: 13px;
+    color: #878787; }
+  .income-group-header > p:last-child {
+    line-height: 15px;
+    padding-top: 8px; }
+
+.income-group .income-group-bottom {
+  height: 40px;
+  line-height: 40px;
+  font-size: 14px;
+  padding: 0 15px; }
+
+.income-btn {
+  padding: 7px 35px; }
+
+.i-yen {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  line-height: 20px;
+  text-align: center;
+  color: #fff;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  margin-right: 5px; }
+
+.i-yen.red {
+  background-color: #FF6651; }
+
+.i-yen.green {
+  background-color: #12CE85; }
+
+.income-bottom-text {
+  position: fixed;
+  left: 0;
+  bottom: 48px;
+  width: 100%;
+  font-size: 14px;
+  color: #D3D3D3;
+  text-align: center; }
+
+.cash-items {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  margin-top: -72px;
+  width: 100%;
+  z-index: 5000001; }
+
+.cash-items p {
+  color: #6C6C6C;
+  font-size: 13px;
+  line-height: 18px; }
+
+.wx-items,
+.bank-items {
+  position: relative;
+  background-color: #fff;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  margin: 0 20px;
+  padding: 15px; }
+
+.bank-items {
+  margin-top: 20px; }
+
+.wx-items .right-items > div {
+  color: #48D83E; }
+
+.bank-items .right-items > div {
+  color: #6CBDFA; }
+
+.right-items {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 70px;
+  background-color: #D7F5F9;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  border-left: 1px #EEEEEE dotted;
+  text-align: center; }
+
+.right-items > div {
+  text-align: center;
+  font-size: 13px; }
+
+.right-items > i {
+  margin-top: 8px; }
+
+.bank-main .form-items {
+  margin-left: 0px;
+  padding-left: 10px; }
+  .bank-main .form-items input {
+    color: #8E8E8E; }
+  .bank-main .form-items:first-child {
+    border-top: 1px solid #DBDBDB; }
+.bank-main .income-btn {
+  margin-top: 20px; }
+.bank-main .code-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ED6D00;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 45px;
+  line-height: 45px;
+  padding: 0 10px; }
+.bank-main .bank-text {
+  padding: 0 10px;
+  margin: 10px 0 5px; }
+  .bank-main .bank-text .right, .bank-main .bank-text .left span {
+    color: #8E8E8E;
+    font-size: 12px;
+    margin-left: 10px; }
+  .bank-main .bank-text .left {
+    color: #373737;
+    font-size: 12px; }
+  .bank-main .bank-text:after {
+    content: " ";
+    display: table;
+    clear: both; }
+.bank-main .mt10 {
+  margin-top: 15px; }
+.bank-main .income-btn .Dis {
+  background-color: #DDDDDD;
+  color: #C4C4C4; }
+
+.bank-group {
+  position: relative;
+  border-bottom: 1px solid #DBDBDB;
+  background-color: #fff;
+  padding: 10px 0; }
+  .bank-group:first-child {
+    border-top: 1px solid #DBDBDB; }
+  .bank-group:after {
+    content: " ";
+    display: table;
+    clear: both; }
+  .bank-group .bank-img {
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    float: left;
+    margin-left: 15px; }
+  .bank-group .card-info {
+    margin-left: 10px;
+    display: inline-block; }
+    .bank-group .card-info span {
+      display: block; }
+    .bank-group .card-info .b-name {
+      font-size: 15px;
+      color: #373737; }
+    .bank-group .card-info .b-info {
+      font-size: 12px;
+      color: #AEAEAE; }
+  .bank-group .icon-choose {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    margin-top: -12px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%; }
+
+.bank-group.big {
+  padding: 10px 0; }
+  .bank-group.big .card-info {
+    margin-top: 8px; }
+
+.bank-group.active .icon-choose {
+  background: url(../img/i-choo-ac.png) no-repeat center; }
+
+.cash-alert {
+  position: absolute;
+  top: 50%;
+  margin-top: -100px;
+  width: 100%;
+  z-index: 500001; }
+  .cash-alert > div {
+    margin: 0 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    -webkit-border-radius: 5px; }
+  .cash-alert .btn-group {
+    border-top: 1px solid #EEEEEE;
+    padding: 10px 20px; }
+  .cash-alert .alert-text {
+    color: #373737;
+    font-size: 14px;
+    text-align: center;
+    padding: 30px 0; }
+
+/*# sourceMappingURL=income.css.map */

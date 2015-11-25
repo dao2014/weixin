@@ -1,0 +1,226 @@
+{
+	"id": "648dc9a1-c4d7-95da-35d3-fbe4a2c65a60",
+	"name": "my直播",
+	"description": "",
+	"order": [
+		"ff07bce4-c821-3825-74f5-4eb8433da7de",
+		"5aed1434-ff5c-e716-95b4-caeb9c298771",
+		"07804ba6-e764-d9c7-3d2a-fff65087ca6d",
+		"1466b991-67ea-d599-ba54-42dbcf5d9a5a",
+		"034abfcf-05d9-0e03-d8e6-1aae4670eb77"
+	],
+	"folders": [],
+	"timestamp": 1447942715143,
+	"owner": 0,
+	"remoteLink": "",
+	"public": false,
+	"requests": [
+		{
+			"id": "034abfcf-05d9-0e03-d8e6-1aae4670eb77",
+			"headers": "",
+			"url": "{{myurl}}directAnser/update",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "wechtOpenId",
+					"value": "oNXXPs4GAVuuKuI1UE7kODcEGGkc",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directId",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "answerStatus",
+					"value": "0",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directPassword",
+					"value": "123456",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448370342541,
+			"name": "用户取消预约听课",
+			"description": "",
+			"collectionId": "648dc9a1-c4d7-95da-35d3-fbe4a2c65a60",
+			"responses": []
+		},
+		{
+			"id": "07804ba6-e764-d9c7-3d2a-fff65087ca6d",
+			"headers": "",
+			"url": "{{myurl}}direct/examineDirect",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "id",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directStatus",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directExamine",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448370333190,
+			"name": "审查直播",
+			"description": "",
+			"collectionId": "648dc9a1-c4d7-95da-35d3-fbe4a2c65a60",
+			"responses": []
+		},
+		{
+			"id": "1466b991-67ea-d599-ba54-42dbcf5d9a5a",
+			"headers": "",
+			"url": "{{myurl}}directAnser/update",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "wechtOpenId",
+					"value": "oNXXPs4GAVuuKuI1UE7kODcEGGkc",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directId",
+					"value": "6",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "answerStatus",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directPassword",
+					"value": "123456",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448370338023,
+			"name": "用户预约听课",
+			"description": "",
+			"collectionId": "648dc9a1-c4d7-95da-35d3-fbe4a2c65a60",
+			"responses": []
+		},
+		{
+			"id": "5aed1434-ff5c-e716-95b4-caeb9c298771",
+			"headers": "",
+			"url": "{{myurl}}direct/getDirectPage?page=1&size=10&directStatus=0&directExamine=1",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448371256707,
+			"name": "获取直播分页",
+			"description": "",
+			"collectionId": "648dc9a1-c4d7-95da-35d3-fbe4a2c65a60",
+			"responses": []
+		},
+		{
+			"id": "ff07bce4-c821-3825-74f5-4eb8433da7de",
+			"headers": "",
+			"url": "{{myurl}}direct/save",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "POST",
+			"data": [
+				{
+					"key": "wechtOpenId",
+					"value": "oNXXPs8FJTP1ckvk4k3e8Geak_S4",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directDes",
+					"value": "测试课程",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directTypeId",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directPassword",
+					"value": "123456",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directStartTime",
+					"value": "2015-11-24 22:45:00",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directEndTime",
+					"value": "2015-11-24 23:55:00",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "directStatus",
+					"value": "0",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1448370507075,
+			"name": "新增直播待审查",
+			"description": "",
+			"collectionId": "648dc9a1-c4d7-95da-35d3-fbe4a2c65a60",
+			"responses": []
+		}
+	]
+}

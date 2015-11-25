@@ -1,0 +1,145 @@
+﻿
+.pay-panel{
+	background-color: #fff;
+	.title{
+		margin-top: 10px;
+		padding: 11px 0 11px 15px;
+		border-top: 1px solid #eaeaea;
+		border-bottom: 1px solid #eaeaea;
+		background-color: #fff;
+	}
+	.income-list {
+	   border-width: 0 0; 
+	}
+	.income-list-items{
+		margin-bottom: 10px;
+	}
+	span{
+		font-size:15px;
+	}
+}
+.pay-main .title p{
+	color: #aaa;
+	font-size: 14px;
+}
+.pay-main .title + .pay-item .pay-info{
+	border-top:none;
+}
+.pay-item{
+	height: 45px;
+	line-height: 45px;
+	padding: 3px 0 3px 15px;
+	background-color: #fff;
+	> img{
+		width: 32px;
+		height: 32px;
+		margin-top: 7px;
+	}
+	.pay-info{
+		position: relative;
+		margin-left: 40px;
+		border-top: 1px solid #eaeaea;
+		p{
+			color: #000;
+			font-size: 16px;
+		}
+	}
+	.icon-choose{
+		position: absolute;
+		top: 50%;
+		right: 15px;
+		margin-top: -12px;
+		border-radius: 50%;
+		-webkit-border-radius: 50%;
+	}
+}
+.pay-item .pay-info.active .icon-choose{
+	background:url(../img/i-choo-ac.png) no-repeat center;
+}
+
+
+/**
+* 选择快递方式与备注
+*/
+.shop-remark{
+	margin-top: 10px;
+	background-color: #fff;
+	.form-items {
+  		margin-left: 0;
+  		padding-left: 10px;
+  		select{
+			position: absolute;
+			right: 25px;
+			top: 7px;
+			direction: rtl;
+			padding-right: 2px;
+			color: #ed6d00;
+			-webkit-appearance: push-button;
+			white-space: pre;
+		}
+		.price{
+		  	color: #F85145;
+		}
+	}
+	.form-label{
+		font-size: 14px;
+	}
+	.form-input.select{
+		font-family: FontAwesome;
+		color: #676767;
+		text-align: right;
+		padding: 0 20px;
+		&:after{
+			content:'\f0dd';
+			position: absolute;
+			margin-top: -4px;
+			font-size: 18px;
+		}
+	}
+	.align-right{
+		text-align: right;
+		padding-right: 20px;
+	}
+	.expresses{
+		font-size: 15px;
+		color: #373737;
+		display: inline-block;
+		width: 150px;
+		padding: 5px 0;
+	}
+	textarea{
+		margin-top: -10px;
+		border: 1px solid #DCDCDC;
+		background-color: #fff;
+		color: #000;
+		font-size: 15px;
+		/* height: 22px; */
+		/* line-height: 22px; */
+		padding: 1px 0 2px 5px;
+		border-radius: 4px;
+		-webkit-border-radius: 4px;
+		resize: none;
+		width: 95%;
+		height: 80px;
+	}
+}
+
+
+// .shop-remark .expresses{
+// 	font-size: 15px;
+// 	color: #373737;
+// 	display: inline-block;
+// 	width: 150px;
+// 	padding: 5px 0;
+// }
+// .shop-remark > p{
+// 	margin-top: 9px;
+// 	font-size: 14px;
+// 	line-height: 14px;
+// }
+// .shop-remark > p>span{
+// 	color: #F85145;
+// 	display: inline-block;
+// 	margin-left: 5px;
+// 	font-size: 14px;
+// }
