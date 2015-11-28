@@ -4,52 +4,78 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>直播列表</title>
-
-    <!-- Bootstrap -->
-    <link href="framework/bootstrap3.3.2/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="framework/jquery/jquery.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="framework/bootstrap3.3.2/bootstrap.min.js"></script>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <link href="framework/bootstrap3.3.2/bootstrap.min.css" rel="stylesheet">
+    <script src="framework/jquery/jquery.js"></script>
+    <link href="framework/angular/angular.min.js" rel="stylesheet">
+    
   </head>
-  <body>
-    <div class="container">
-      <h2>Table</h2>
-      <p> .table-hover 类启用表格中 tbody 上的行的悬停效果：</p>                              
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th colspan="2">Firstname</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Anna</td>
-            <td>点击</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Debbie</td>
-            <td>点击</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>John</td>
-            <td>点击</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </body>
+ <body ng-app="myApp" ng-controller="userCtrl">
+
+<div class="container">
+
+<h3>Users</h3>
+
+<table class="table table-striped">
+  <thead><tr>
+    <th>Edit</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+  </tr></thead>
+  <tbody><tr ng-repeat="user in users">
+    <td>
+      <button class="btn" ng-click="editUser(user.id)">
+      <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+      </button>
+    </td>
+    <td>{{ user.fName }}</td>
+    <td>{{ user.lName }}</td>
+  </tr></tbody>
+</table>
+
+<hr>
+<button class="btn btn-success" ng-click="editUser('new')">
+  <span class="glyphicon glyphicon-user"></span> Create New User
+</button>
+<hr>
+
+<h3 ng-show="edit">Create New User:</h3>
+<h3 ng-hide="edit">Edit User:</h3>
+
+<form class="form-horizontal">
+<div class="form-group">
+  <label class="col-sm-2 control-label">First Name:</label>
+  <div class="col-sm-10">
+    <input type="text" ng-model="fName" ng-disabled="!edit" placeholder="First Name">
+  </div>
+</div> 
+<div class="form-group">
+  <label class="col-sm-2 control-label">Last Name:</label>
+  <div class="col-sm-10">
+    <input type="text" ng-model="lName" ng-disabled="!edit" placeholder="Last Name">
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Password:</label>
+  <div class="col-sm-10">
+    <input type="password" ng-model="passw1" placeholder="Password">
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Repeat:</label>
+  <div class="col-sm-10">
+    <input type="password" ng-model="passw2" placeholder="Repeat Password">
+  </div>
+</div>
+</form>
+
+<hr>
+<button class="btn btn-success" ng-disabled="error || incomplete">
+  <span class="glyphicon glyphicon-save"></span> Save Changes
+</button>
+</div>
+
+<script src = "js/app.js"></script>
+</body>
 </html>

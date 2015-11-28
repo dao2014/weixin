@@ -14,6 +14,7 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.redis.RedisPlugin;
 import com.jfinal.weixin.controller.DirectAnswerControlle;
 import com.jfinal.weixin.controller.DirectControlle;
+import com.jfinal.weixin.controller.IndexController;
 import com.jfinal.weixin.controller.UserController;
 import com.jfinal.weixin.demo.WeixinApiController;
 import com.jfinal.weixin.demo.WeixinMsgController;
@@ -51,7 +52,7 @@ public class Conf extends JFinalConfig{
 	}
 	
 	public void configRoute(Routes me) {
-//		me.add("/", IndexController.class);
+		me.add("/", IndexController.class);
 		me.add("/user", UserController.class);
 		me.add("/directAnser", DirectAnswerControlle.class); 
 		me.add("/direct", DirectControlle.class);
