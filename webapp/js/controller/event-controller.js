@@ -1,20 +1,22 @@
 var app = angular.module('MyApp');
 
-app.controller('EventController', ['$scope', 'EventService', '$compile','$location','$routeParams','$log',
-	function($scope, EventService, $compile,$location, $routeParams, $log) {
+app.controller('EventController', ['$scope', 'EventService', '$compile','$http','$location','$routeParams','$log',
+	function($scope, EventService,$http, $compile,$location, $routeParams, $log) {
 		EventService.getEvents().then(function(events) {
 			$scope.users = events;
 		});
 		
 		$scope.submits = function(id) {
-			alert($location.absUrl());
-			alert(QueryString('code'));
-//			$http.get('./direct/getDirectPage?page=1&size=10&directStatus=0&directExamine=0').success(function(result) {
-//				var datas =result.datum.list;
-//				deferred.resolve(datas);
-//			}).error(function(result) {
-//				deferred.reject(false);
-//			});
+			alert($location.url());
+			var item = 'code';
+			 var sValue=$location.absUrl().match(new RegExp("[\?\&]"+item+"=([^\&]*)(\&?)","i"));
+			 var valus = sValue?sValue[1]:sValue;
+			$http.get('./directAnser/update?directId='+id+'&code='+valus+'&answerStatus=1'+'&directPassword=123456')
+			.success(function(data){
+				if(data.code==1){
+					alert('预约成功！');
+				}
+			});
         };
 	}]);
 

@@ -46,6 +46,15 @@ public class SnsAccessTokenApi
     }
     
     /**
+     * 根据  信息
+     * @param code
+     * @return
+     */
+    public static SnsAccessToken getgetSnsAccessToken(String code){
+    	return getSnsAccessToken(ApiConfigKit.getApiConfig().getAppId(), ApiConfigKit.getApiConfig().getAppSecret(), code);
+    }
+    
+    /**
      * 通过code获取access_token
      *
      * @param code   第一步获取的code参数

@@ -4,7 +4,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import redis.clients.jedis.Jedis;
+
+import com.jfinal.plugin.redis.Cache;
+import com.jfinal.plugin.redis.Redis;
 import com.jfinal.weixin.model.DirectAnswer;
+import com.jfinal.weixin.sdk.api.SnsAccessToken;
+import com.jfinal.weixin.sdk.api.SnsAccessTokenApi;
 import com.jfinal.weixin.server.DirectAnswerServer;
 import com.jfinal.weixin.server.impl.DirectAnswerServerImpl;
 
@@ -27,8 +33,12 @@ public class DirectAnswerControlle extends BaseControlle implements IBaseControl
 	 */
 	@Override
 	public void update() {
+//		Cache newsCache = Redis.use("direct");
+//		Jedis jedis = newsCache.getJedis();
+		String code = getPara("code");
+		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
 		Map<String, Object> attrs = new HashMap<String,Object>();
-		attrs.put("wecht_open_id", getPara("wechtOpenId"));
+		attrs.put("wecht_open_id", st.getOpenid());
 		attrs.put("direct_id", getPara("directId"));
 		attrs.put("answer_status", getPara("answerStatus"));   //0为已经取消接听,1已接听
 		attrs.put("direct_password", getPara("directPassword"));

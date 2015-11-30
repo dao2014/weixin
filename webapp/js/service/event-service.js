@@ -5,7 +5,7 @@ app.factory('EventService', ['$http', '$q',
 		return {
 			getEvents: function() {
 				var deferred = $q.defer();
-				$http.get('./direct/getDirectPage?page=1&size=10&directStatus=0&directExamine=0').success(function(result) {
+				$http.get('./direct/getDirectPage?page=1&size=10&directStatus=1&directExamine=1').success(function(result) {
 					
 					var datas =result.datum.list;
 					deferred.resolve(datas);
