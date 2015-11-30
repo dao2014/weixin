@@ -5,18 +5,11 @@ app.controller('EventController', ['$scope', 'EventService', '$compile','$http',
 		EventService.getEvents().then(function(events) {
 			$scope.users = events;
 		});
-		
 		$scope.submits = function(id) {
 			alert($location.url());
 			var item = 'code';
 			 var sValue=$location.absUrl().match(new RegExp("[\?\&]"+item+"=([^\&]*)(\&?)","i"));
-			 var valus = sValue?sValue[1]:sValue;
-			$http.get('./directAnser/update?directId='+id+'&code='+valus+'&answerStatus=1'+'&directPassword=123456')
-			.success(function(data){
-				if(data.code==1){
-					alert('预约成功！');
-				}
-			});
+			 EventService.submits(id,sValue);
         };
 	}]);
 

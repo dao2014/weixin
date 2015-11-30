@@ -14,6 +14,22 @@ app.factory('EventService', ['$http', '$q',
 				});
 
 				return deferred.promise;
+			},
+			submits:function(id,code){
+				var param = {
+						 'directId': id,
+				 		 'code':code,
+				 		'answerStatus':1,
+				 		'directPassword':123456
+		             };
+				$http.post('./directAnser/update', param).success(
+						   function(result) {
+							 if(result.code==1){
+									alert('预约成功！');
+								}
+							}).error(function(result) {
+								alert('失败！');
+						});
 			}
 		};
 }]);
