@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="jfinal-weixin">
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
-        <wb-resource deploy-path="/" source-path="/webapp"/>
-        <property name="context-root" value="jfinal-weixin"/>
-        <property name="java-output-path" value="/jfinal-weixin/webapp/WEB-INF/classes"/>
-    </wb-module>
-</project-modules>

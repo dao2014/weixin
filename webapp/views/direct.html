@@ -1,17 +1,17 @@
 <div class="container">
 	<table class="table table-condensed"> 
 	  <thead><tr>
-	    <th class='ex'>讲师</th>
-	    <th class='ex' colspan='3'>ֱ直播</th>
+	    <th class='ex'>~~~</th>
+	    <th class='ex' colspan='3'>ֱ！！！！</th>
 	  </tr></thead>
 	  <tbody>
 	  <tr ng-repeat="user in users">
 	    <td class='ex' >{{ user.direct_des }}</td>
-	    <td colspan='2'>开始直播：{{ user.direct_start_time }}</td>
+	    <td colspan='2'>{{ user.direct_start_time }}</td>
 	    <td>
 	    	<div ng-click="submits(user.id)" class="bs-example">
 			   <button type="button" class="btn btn-primary" bg-model="sub"
-			      data-loading-text="{{user.direct_des}}}">{{ feichang }}
+			      >收听
 			   </button>
 			</div>
 	    </td>
