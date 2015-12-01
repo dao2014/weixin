@@ -2,7 +2,7 @@ package com.jfinal.weixin.server;
 
 import java.util.Map;
 
-import com.jfinal.weixin.model.User;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.weixin.sdk.msg.in.event.InFollowEvent;
 
 public interface UserServer {
@@ -14,6 +14,15 @@ public interface UserServer {
 	 * @throws Exception
 	 */
 	public void saveOrUpdateUser(InFollowEvent inFollowEvent) throws Exception;
+	
+	
+	/**
+	 * 根据微信的openiD 获取用户信息
+	 * @param OpenId
+	 * @return
+	 * @throws Exception
+	 */
+	public Record findUserInfo(String OpenId) throws Exception;
 	
 	/**
 	 * 根据微信的openiD 获取用户信息

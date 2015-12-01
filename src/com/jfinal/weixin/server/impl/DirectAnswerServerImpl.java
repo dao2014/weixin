@@ -47,12 +47,16 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 
 	@Override
 	public boolean update(Map<String, Object> attrs) {
+		
+		String anserId=null;
+		Integer dbAnswerStatus=null;
 		String directId = attrs.get("direct_id")+"";
 		String openId = attrs.get("wecht_open_id")+"";
 		String password = attrs.get("direct_password")+"";
-		String anserId=null;
-		Integer dbAnswerStatus=null;
+		String nickName = attrs.get("nick_name")+"";
 		Integer status =Integer.parseInt(attrs.get("answer_status")+"");
+		
+		
 		UserDirect ud = ds.findId(directId);
 		Map<String, Object> dsattrs = new HashMap<String,Object>();
 		dsattrs.put("id", directId);
@@ -62,6 +66,8 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 		if(status==1 && !password.equals(ud.get("direct_password"))){
 			return false;
 		}
+		
+		
 		attrs.remove("direct_password");
 		DirectAnswer directAnswers = DirectAnswer.directAnswerDao.findFirst("select id,answer_status from direct_answer where wecht_open_id=? and direct_id=?", openId,directId);
 		if(StringUtils.isNull(directAnswers)){//新增
@@ -74,11 +80,15 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 				return false;
 			}
 		}
+		
+		
 		attrs.remove("answer_create_time");
 		anserId = directAnswers.getStr("id");
 		dbAnswerStatus = directAnswers.getInt("answer_status");
 		attrs.put("id", anserId);
 		attrs.put("answer_update_time", new Date());
+		
+		
 		if(DirectAnswer.directAnswerDao.setAttrs(attrs).update()){
 			//状态  1 是接听 0 取消
 			if(status==null)
@@ -86,7 +96,7 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 			if(status==1 && dbAnswerStatus != status){  //是否接听
 				dsattrs.put("direct_number", ++count);
 				//创建缓存
-				addDirectUser(openId,directId,ud);
+				addDirectUser(openId,directId,ud,nickName);
 			}else if(status==0 && dbAnswerStatus != status){
 				//删除
 				dsattrs.put("direct_number", --count);
@@ -110,11 +120,13 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 	}
 	
 	/**
-	 * 添加听课人员
-	 * @param attrs
+	 * 保存 收听人信息
+	 * @param openId    收听人
+	 * @param directId  课程信息
+	 * @param ud        当前课程信息
 	 * @return
 	 */
-	public boolean addDirectUser(String openId,String directId,UserDirect ud){
+	public boolean addDirectUser(String openId,String directId,UserDirect ud,String nickName){
 		String jsOpenId = ud.getStr("wecht_open_id");
 		Cache cache = Redis.use();
 		Jedis jedis = cache.getJedis();
@@ -126,7 +138,7 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 		log.info("用户收听失效时间:" + sent);
 		//所有听众信息
 		if(sent>0)
-			jedis.setex(openId+ControllerMessage.LESSON_ID, sent, directIdkey+","+jsOpenId);
+			jedis.setex(openId+ControllerMessage.LESSON_ID, sent, directIdkey+","+jsOpenId+","+nickName);
 		cache.close(jedis);
 		return true;
 	}
@@ -170,7 +182,7 @@ public class DirectAnswerServerImpl<M>  implements DirectAnswerServer<M> {
 	
 	public boolean save(Map<String, Object> attrs,UserDirect ud) {
 		if(DirectAnswer.directAnswerDao.setAttrs(attrs).save()){
-			return addDirectUser(attrs.get("wecht_open_id")+"",attrs.get("direct_id")+"",ud);
+			return addDirectUser(attrs.get("wecht_open_id")+"",attrs.get("direct_id")+"",ud,attrs.get("nick_name")+"");
 		}
 		return false;
 	}

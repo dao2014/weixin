@@ -8,6 +8,7 @@ app.controller('EventController', ['$scope', 'EventService', '$compile','$http',
 		$scope.submits = function(id) {
 			var item = 'code';
 			 var sValue=$location.absUrl().match(new RegExp("[\?\&]"+item+"=([^\&]*)(\&?)","i"));
+			 sValue= sValue?sValue[1]:sValue;
 			 EventService.submits(id,sValue);
         };
 	}]);

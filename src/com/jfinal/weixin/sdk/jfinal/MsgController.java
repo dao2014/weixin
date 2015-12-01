@@ -143,6 +143,7 @@ public abstract class MsgController extends Controller {
 			/****查看 当前用户的 直播缓存****/
 			for (String directIdR : list) {
 				String[] directInfo = directIdR.split(",");
+				String directId = directInfo[0];
 				String start = directInfo[1];
 				String end = directInfo[2];
 				Date startTime = DateUtils.formateStr(start);
@@ -170,12 +171,12 @@ public abstract class MsgController extends Controller {
 						/**
 						 * 发送 数据
 						 */
-						sendMsg(massge,sendUserOpenId,sendStatus);
+						sendMsg(massge,sendUserOpenId,sendStatus,"");
 					}
 					/**
 					 * 保存数据
 					 */
-					saveServer(im, massge, sendStatus, openId, minRightTime, eminEndTime, cache);
+					saveServer(im, massge, sendStatus, openId, minRightTime, eminEndTime, cache,directId);
 					
 				} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime < 0) { // 直播已
 																				// 结束
@@ -224,9 +225,16 @@ public abstract class MsgController extends Controller {
 		}
 		if (!StringUtils.isNull(lessonInfo)) { // 说明 该用户已经关注了
 			String[] directInfo = lessonInfo.split(",");
+			String nidckName="";
+			String directId = directInfo[0];
 			String start = directInfo[1];
 			String end = directInfo[2];
 			String directOpenId = directInfo[3]; // 主播ID
+			
+			//获取当前的用户名称
+			if(directInfo.length>=4)
+				nidckName = directInfo[4]; // 主播ID
+			
 			Date startTime = DateUtils.formateStr(start);
 			Date endTime = DateUtils.formateStr(end);
 			// 计算 距离 直播的时间 如果 大于0 或者等于0 说明 还有多少分钟就开始直播 如果 小于0 说明 直播已经开始
@@ -243,7 +251,7 @@ public abstract class MsgController extends Controller {
 				/**
 				 * 直播开始 
 				 */
-				startDirect(massge,directOpenId,im,lessonOpenIds,minRightTime,eminEndTime,cache);
+				startDirect(massge,directOpenId,im,lessonOpenIds,minRightTime,eminEndTime,cache,nidckName,directId);
 				
 			} else if (eminEndTime >= ControllerMessage.DIRECT_MSG_END && eminEndTime <=0) { // 直播 已经结束
 				// 假设用户 点击
@@ -277,19 +285,21 @@ public abstract class MsgController extends Controller {
 	 * @param minRightTime		开播距离时间
 	 * @param eminEndTime		结束距离时间
 	 * @param cache				缓存
+	 * @param nickName			当前 听课人员的名称
+	 * @param directId			当前 课程Id
 	 */
 	public void startDirect(InMsg massge,String directOpenId,InTextMsg im,
-			String lessonOpenIds,int minRightTime,int eminEndTime,Jedis cache ){
+			String lessonOpenIds,int minRightTime,int eminEndTime,Jedis cache,String nickName,String directId ){
 		// 检查 发送的详细 规范否
 		boolean sendStatus = true;
 		/**
 		 * 发送消息
 		 */
-		sendMsg(massge,directOpenId,sendStatus);
+		sendMsg(massge,directOpenId,sendStatus,nickName);
 		/**
 		 * 保存数据
 		 */
-		saveServer(im, massge, sendStatus, lessonOpenIds, minRightTime, eminEndTime, cache);
+		saveServer(im, massge, sendStatus, lessonOpenIds, minRightTime, eminEndTime, cache,directId);
 	}
 	
 	/**
@@ -297,10 +307,14 @@ public abstract class MsgController extends Controller {
 	 * @param massge
 	 * @param openId
 	 * @param sendStatus
+	 * @param 当前听课人员的名称
 	 */
-	public void sendMsg(InMsg massge,String openId,boolean sendStatus){
+	public void sendMsg(InMsg massge,String openId,boolean sendStatus,String nickName){
 		if (massge instanceof InTextMsg){
-			ApiResult ar= CustomServiceApi.sendText(openId, ((InTextMsg) massge).getContent());
+			if(!StringUtils.isNull(nickName)){
+				nickName = nickName + "：";
+			}
+			ApiResult ar= CustomServiceApi.sendText(openId, nickName + ""+((InTextMsg) massge).getContent());
 			Integer in = ar.getErrorCode();
 			if(in==0){
 				log.info("====================发送文本成功=============");
@@ -362,8 +376,9 @@ public abstract class MsgController extends Controller {
 	 * @param minRightTime		开播距离时间
 	 * @param eminEndTime		结束距离时间
 	 * @param cache				缓存
+	 * @param directId			当前课程ID
 	 */
-	public void saveServer(InTextMsg im,InMsg massge,boolean sendStatus,String lessonOpenIds,int minRightTime,int eminEndTime,Jedis cache){
+	public void saveServer(InTextMsg im,InMsg massge,boolean sendStatus,String lessonOpenIds,int minRightTime,int eminEndTime,Jedis cache,String directId){
 		if (!sendStatus) { // 监控数据非法
 			processInTextMsg(im, lessonOpenIds,
 					ControllerMessage.DIRECT_MSG_ERROR);
@@ -373,7 +388,7 @@ public abstract class MsgController extends Controller {
 			 */
 			StringBuffer sb = new StringBuffer();
 			// 直播课堂ID
-			sb.append(lessonOpenIds + ControllerMessage.CONTENT_SPLIT);
+			sb.append(directId + ControllerMessage.CONTENT_SPLIT);
 			// 用户发送信息ID
 			if (massge instanceof InTextMsg) {
 				sb.append(((InTextMsg) massge).getContent()

@@ -64,6 +64,16 @@ public class UserServerImpl extends BaseServerImpl implements UserServer {
 	}
 
 	@Override
+	public Record findUserInfo(String OpenId) throws Exception {
+		// TODO Auto-generated method stub
+		Record user = Db.findFirst("SELECT * FROM user WHERE wacht_open_id=?", OpenId);
+		if(user!=null)
+			return user;
+		return null;
+	}
+	
+	
+	@Override
 	public String findOpenId(String OpenId) throws Exception {
 		// TODO Auto-generated method stub
 		Record user = Db.findFirst("SELECT * FROM user WHERE wacht_open_id=?", OpenId);
