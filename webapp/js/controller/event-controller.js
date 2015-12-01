@@ -6,7 +6,6 @@ app.controller('EventController', ['$scope', 'EventService', '$compile','$http',
 			$scope.users = events;
 		});
 		$scope.submits = function(id) {
-			alert($location.url());
 			var item = 'code';
 			 var sValue=$location.absUrl().match(new RegExp("[\?\&]"+item+"=([^\&]*)(\&?)","i"));
 			 EventService.submits(id,sValue);

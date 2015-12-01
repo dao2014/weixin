@@ -35,13 +35,13 @@ public class DirectAnswerControlle extends BaseControlle implements IBaseControl
 	public void update() {
 //		Cache newsCache = Redis.use("direct");
 //		Jedis jedis = newsCache.getJedis();
-		String code = getPara("code");
-		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
 		Map<String, Object> attrs = new HashMap<String,Object>();
-		attrs.put("wecht_open_id", st.getOpenid());
+		String code = getPara("code");
 		attrs.put("direct_id", getPara("directId"));
 		attrs.put("answer_status", getPara("answerStatus"));   //0为已经取消接听,1已接听
 		attrs.put("direct_password", getPara("directPassword"));
+		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
+		attrs.put("wecht_open_id", st.getOpenid());
 		attrs.put("answer_create_time", new Date());
 		if(da.update(attrs))
 			renderSuccess();

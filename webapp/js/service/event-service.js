@@ -16,13 +16,13 @@ app.factory('EventService', ['$http', '$q',
 				return deferred.promise;
 			},
 			submits:function(id,code){
-				var param = {
-						 'directId': id,
-				 		 'code':code,
-				 		'answerStatus':1,
-				 		'directPassword':123456
-		             };
-				$http.post('./directAnser/update', param).success(
+//				var param = {
+//						 'directId': id,
+//				 		 'code':code,
+//				 		'answerStatus':'1',
+//				 		'directPassword':'123456'
+//		             };
+				$http.post('./directAnser/update?answerStatus=1&code='+code+'&directId='+id+'&directPassword=123456').success(
 						   function(result) {
 							 if(result.code==1){
 									alert('预约成功！');
