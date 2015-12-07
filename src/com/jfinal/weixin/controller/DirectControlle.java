@@ -68,7 +68,7 @@ public class DirectControlle extends BaseControlle implements IBaseControlle {
 		attrs.put("direct_password", getPara("directPassword"));
 		attrs.put("direct_start_time", getPara("directStartTime"));
 		attrs.put("direct_end_time", getPara("directEndTime"));
-		attrs.put("direct_create_time", new Date());
+		attrs.put("create_date", new Date());
 		attrs.put("direct_status", getPara("directStatus")); //是否在直播0直播待审查 1默认等待直播,2正在直播 3 直播结束 4.没发布 5 已经发布
 		attrs.put("direct_examine", 0);   //0 默认待审查 1. 审查 通过
 		if(ds.save(attrs))
