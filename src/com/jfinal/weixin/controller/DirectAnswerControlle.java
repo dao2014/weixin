@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.weixin.controller.util.UserUtil;
 import com.jfinal.weixin.model.DirectAnswer;
-import com.jfinal.weixin.sdk.api.SnsAccessToken;
-import com.jfinal.weixin.sdk.api.SnsAccessTokenApi;
 import com.jfinal.weixin.server.DirectAnswerServer;
 import com.jfinal.weixin.server.UserServer;
 import com.jfinal.weixin.server.impl.DirectAnswerServerImpl;
@@ -33,17 +32,33 @@ public class DirectAnswerControlle extends ApiBaseController implements IBaseCon
 	@Override
 	public void update() {
 		
+//		String code = getPara("code");
+//		if(StringUtils.isNull(code)){
+//			renderError("获取code为空");
+//			return ;
+//		}
+//		
+//		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
+//		String openId = st.getOpenid();
+		
+		String openId = getPara("wechtOpenId");
+		String answerStatus = getPara("answerStatus")+"";
+		if(StringUtils.isNull(openId)){
+			renderError("获取openId为空");
+			return ;
+		}
+		
+		if( answerStatus.equals("0") && UserUtil.checkUserSeeding(openId)){
+			renderError("请先取消预约其他课程！");
+			return ;
+		}
+		
 		Map<String, Object> attrs = new HashMap<String,Object>();
-		String code = getPara("code");
 		attrs.put("direct_id", getPara("directId"));
-		attrs.put("answer_status", getPara("answerStatus"));   //0为已经取消接听,1已接听
+		attrs.put("answer_status", answerStatus);   //0为已经取消接听,1已接听
 		attrs.put("direct_password", getPara("directPassword"));
 		attrs.put("answer_create_time", new Date());
 		
-		
-		
-		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
-		String openId = st.getOpenid();
 		try {
 			Record re = us.findUserInfo(openId);
 			if(!StringUtils.isNull(re)){
@@ -62,7 +77,7 @@ public class DirectAnswerControlle extends ApiBaseController implements IBaseCon
 		else
 			renderError();
 	}
-
+	
 	@Override
 	public void get() {
 		// TODO Auto-generated method stub

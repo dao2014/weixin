@@ -94,9 +94,7 @@ public class WeixinMsgController extends MsgController {
 				OutTextMsg outMsg = new OutTextMsg(inTextMsg);
 				outMsg.setContent(helpStr);
 				render(outMsg);
-			}
-			// 图文消息测试
-			else if ("?".equalsIgnoreCase(msgContent)) {
+			}else if ("?".equalsIgnoreCase(msgContent)) {
 				OutTextMsg outMsg = new OutTextMsg(inTextMsg);
 				outMsg.setContent(con);
 				render(outMsg);

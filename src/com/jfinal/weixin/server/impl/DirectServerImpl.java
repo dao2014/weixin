@@ -26,6 +26,25 @@ public class DirectServerImpl<M>  implements DirectServer<M> {
 		log = Logger.getLogger(DirectServerImpl.class);
 	}
 
+	
+	
+	
+	@Override
+	public Page<M> findUserPage(int start, int end, Object... paras) {
+		// TODO Auto-generated method stub
+		Page<M> paginate =  (Page<M>) UserDirect.userDirectDao.paginate(start, end, " select * ", 
+				"from user_direct where  wecht_open_id=?", paras);
+		if(!StringUtils.isNull(paginate)){
+			log.info(ControllerMessage.RESPONG_MASG_SUCCESS);
+		}else{
+			log.info(ControllerMessage.RESPONG_MASG_ERROR);
+		}
+		return paginate;
+	}
+
+
+
+
 	@Override
 	public Page<M> findPage(int start, int end, Object... paras) {
 		// TODO Auto-generated method stub
@@ -100,7 +119,17 @@ public class DirectServerImpl<M>  implements DirectServer<M> {
 
 	@Override
 	public boolean save(Map<String, Object> attrs) {
+		String id = attrs.get("id") + "";
+		attrs.put("update_date", new Date());
+		if(!StringUtils.isNull(id)){
+			if(Db.update("user_direct", new Record().setColumns(attrs))){
+				return true;
+			}else{
+				return false;
+			}
+		}
 		attrs.put("id", StringUtils.getUUID());
+		attrs.put("create_date", new Date());
 		if(Db.save("user_direct", new Record().setColumns(attrs))){
 			log.info(ControllerMessage.RESPONG_DATE_SUCCESS);
 			return true;

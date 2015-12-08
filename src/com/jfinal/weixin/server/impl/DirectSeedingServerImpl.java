@@ -4,11 +4,9 @@ import java.util.Map;
 
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.weixin.server.DirectServer;
+import com.jfinal.weixin.server.DirectSeedingServer;
 
-public class DirectSeedingServerImpl <M>  implements DirectServer<M>{
-	
-	
+public class DirectSeedingServerImpl <M>  implements DirectSeedingServer<M>{
 	
 
 	@Override

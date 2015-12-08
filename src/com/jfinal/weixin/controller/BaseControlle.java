@@ -61,6 +61,19 @@ public class BaseControlle extends Controller {
     }
 
     /**
+     * 返回一个对象
+     * @param date
+     */
+    public void renderDatumResponse(Object date,String msg){
+    	
+    	if(StringUtils.isNull(date)){
+    		renderSuccess(msg);
+    	}else{
+    		renderJson(new DatumResponse(date,msg));
+    	}
+    }
+    
+    /**
      * 响应数组类型*
      * @param list 结果集合
      */
@@ -79,7 +92,7 @@ public class BaseControlle extends Controller {
      * @param message 响应信息
      */
     public void renderError(String message) {
-        renderJson(new BaseResponse().setMessage(message));
+        renderJson(new BaseResponse(0).setMessage(message));
         
     }
     
@@ -88,7 +101,7 @@ public class BaseControlle extends Controller {
      * @param message 响应信息
      */
     public void renderError() {
-        renderJson(new BaseResponse().setMessage(ControllerMessage.RESPONG_MAGE_E));
+        renderJson(new BaseResponse(0).setMessage(ControllerMessage.RESPONG_MAGE_E));
         
     }
 

@@ -15,4 +15,19 @@ public class UserDirect  extends Model<UserDirect> {
 	 */
 	public static final UserDirect userDirectDao = new UserDirect();
 	
+	/**
+	 * 0说明 用户 没有 接听。  1 说明用户已经预约
+	 */
+	private Integer userSeeding;
+
+
+	public Integer getUserSeeding() {
+		return userSeeding;
+	}
+
+
+	public void setUserSeeding(Integer userSeeding) {
+		this.userSeeding = userSeeding;
+	}
+	
 }

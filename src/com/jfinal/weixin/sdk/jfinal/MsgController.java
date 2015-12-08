@@ -88,7 +88,10 @@ public abstract class MsgController extends Controller {
 			newsCache.close(jedis);
 //			processInTextMsg((InTextMsg)msg,null,null);
 			return;
-		}else if (msg instanceof InTextMsg || msg instanceof InImageMsg || msg instanceof InVoiceMsg 
+		}else if(msg instanceof InTextMsg){
+			InTextMsg im = (InTextMsg) msg;
+			processInTextMsg(im,null,null);
+		}else if ( msg instanceof InImageMsg || msg instanceof InVoiceMsg 
 				|| msg instanceof InVideoMsg || msg instanceof InLocationMsg || msg instanceof InShortVideoMsg ){
 			log.info("准备发送提示信息:"+openId);
 			InTextMsg im = new InTextMsg(msg.getToUserName(), msg.getFromUserName(), msg.getCreateTime(), "text");
