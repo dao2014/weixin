@@ -181,7 +181,7 @@ public class DirectControlle extends BaseControlle implements IBaseControlle {
 		UserDirect ud= ds.findId(getPara("id"));
 		if(ud != null ){
 			if(UserUtil.checkUserSeeding(openId)){
-				ud.setUserSeeding(1);
+				ud.set("userSeeding", 1);
 			}
 			renderDatumResponse(ud);
 		}else{
