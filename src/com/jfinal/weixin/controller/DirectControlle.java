@@ -21,15 +21,13 @@ import com.jfinal.weixin.tools.util.StringUtils;
  * @author Administrator
  *
  */
-public class DirectControlle extends BaseControlle implements IBaseControlle {
+public class DirectControlle extends ApiBaseController implements IBaseControlle {
 	public DirectServer<UserDirect> ds;
 	private static Logger log ;
 	public DirectControlle(){
 		ds = new DirectServerImpl<UserDirect>();
 		log = Logger.getLogger(DirectControlle.class);
 	}
-
-	
 	
 	/**
 	 * 改变 课程

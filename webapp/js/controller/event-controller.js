@@ -2,14 +2,15 @@ var app = angular.module('MyApp');
 
 app.controller('EventController', ['$scope', 'EventService', '$compile','$http','$location','$routeParams','$log',
 	function($scope, EventService,$http, $compile,$location, $routeParams, $log) {
-		EventService.getEvents().then(function(events) {
+	 var item = 'code';
+	 var code=$location.absUrl().match(new RegExp("[\?\&]"+item+"=([^\&]*)(\&?)","i"));
+	 code= code?code[1]:code;
+		EventService.getEvents(code).then(function(events) {
 			$scope.users = events;
 		});
 		$scope.submits = function(id) {
-			var item = 'code';
-			 var sValue=$location.absUrl().match(new RegExp("[\?\&]"+item+"=([^\&]*)(\&?)","i"));
-			 sValue= sValue?sValue[1]:sValue;
-			 EventService.submits(id,sValue);
+			
+			 EventService.submits(id,code);
         };
 	}]);
 
