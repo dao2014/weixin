@@ -8,6 +8,7 @@ public class ControllerMessage {
 	public static final String RESPONG_DATE_ERROR = "保存失败！";
 	public static final String RESPONG_MAGE_E = "操作失败！";
 	public static final String RESPONG_MAGE_S = "操作成功！";
+	public static final String REDIS_CODE = "code:";
 	
 	
 	/***********************************

@@ -6,6 +6,9 @@ import java.util.Map;
 
 import com.jfinal.log.Logger;
 import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.redis.Cache;
+import com.jfinal.plugin.redis.Redis;
+import com.jfinal.weixin.common.ControllerMessage;
 import com.jfinal.weixin.controller.util.UserUtil;
 import com.jfinal.weixin.model.UserDirect;
 import com.jfinal.weixin.sdk.api.SnsAccessToken;
@@ -13,7 +16,10 @@ import com.jfinal.weixin.sdk.api.SnsAccessTokenApi;
 import com.jfinal.weixin.server.DirectServer;
 import com.jfinal.weixin.server.impl.DirectAnswerServerImpl;
 import com.jfinal.weixin.server.impl.DirectServerImpl;
+import com.jfinal.weixin.tools.util.DateUtils;
 import com.jfinal.weixin.tools.util.StringUtils;
+
+import redis.clients.jedis.Jedis;
 
 
 /**
@@ -57,12 +63,24 @@ public class DirectControlle extends ApiBaseController implements IBaseControlle
 			renderError("获取code为空");
 			return ;
 		}
+
+		Cache cache = Redis.use();
+		Jedis jedis = cache.getJedis();
+		String codeKey = ControllerMessage.REDIS_CODE+code;
+		String openId="";
 		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
-		String openId = st.getOpenid();
+		openId = st.getOpenid();
 		if(StringUtils.isNull(openId)){
-			renderError("获取openId为空");
-			return ;
+			openId = jedis.get(codeKey);
+			if(StringUtils.isNull(openId)){
+				renderError("获取openId为空");
+				return ;
+			}
+		}else{
+			jedis.set(codeKey, openId);
+			jedis.expire(codeKey, 300);
 		}
+		cache.close(jedis);
 		
 		int pageIn = getParaToInt("page");
 		int size = getParaToInt("size");
@@ -88,13 +106,25 @@ public class DirectControlle extends ApiBaseController implements IBaseControlle
 			renderError("获取code为空");
 			return ;
 		}
-		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
-		String openId = st.getOpenid();
-		if(StringUtils.isNull(openId)){
-			renderError("获取openId为空");
-			return ;
-		}
 		
+		
+		Cache cache = Redis.use();
+		Jedis jedis = cache.getJedis();
+		String codeKey = ControllerMessage.REDIS_CODE+code;
+		String openId="";
+		SnsAccessToken st = SnsAccessTokenApi.getgetSnsAccessToken(code);
+		openId = st.getOpenid();
+		if(StringUtils.isNull(openId)){
+			openId = jedis.get(codeKey);
+			if(StringUtils.isNull(openId)){
+				renderError("获取openId为空");
+				return ;
+			}
+		}else{
+			jedis.set(codeKey, openId);
+			jedis.expire(codeKey, 300);
+		}
+		cache.close(jedis);
 		int pageIn = getParaToInt("page");
 		int size = getParaToInt("size");
 		int directStatus = getParaToInt("directStatus");
