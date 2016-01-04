@@ -1,1 +1,1 @@
-angular.module 'zhibo', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngMessages', 'ngAria', 'ui.router', 'ui.bootstrap', 'toastr']
+angular.module 'frontend', ['ngCookies', 'ngTouch', 'ngResource', 'ui.router', 'ui.bootstrap', 'toastr']

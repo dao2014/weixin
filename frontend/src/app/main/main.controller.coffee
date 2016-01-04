@@ -1,4 +1,4 @@
-angular.module 'zhibo'
+angular.module 'frontend'
   .controller 'MainController', ($timeout, webDevTec, toastr) ->
     'ngInject'
     vm = this
@@ -24,7 +24,7 @@ angular.module 'zhibo'
 
     vm.awesomeThings = []
     vm.classAnimation = ''
-    vm.creationDate = 1449889060854
+    vm.creationDate = 1451575742356
     vm.showToastr = showToastr
     activate()
     return
